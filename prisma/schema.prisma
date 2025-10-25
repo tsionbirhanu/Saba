@@ -37,7 +37,7 @@ model User {
   messagesReceived Message[]        @relation("ReceivedMessages")
   favorites       Favorite[]        // Wishlist items
   rate            Rating[]
-  comments         Comment[]
+
 }
 
 model DesignerProfile {
@@ -89,7 +89,7 @@ model Product {
   orders             Order[]
   rate               Rating[]
   favorites          Favorite[]
-  comments           Comment[]
+
 }
 
 model Order {
@@ -126,17 +126,6 @@ model Rating{
 
   user        User     @relation(fields: [userId], references: [id])
   product     Product  @relation(fields: [productId], references: [id])
-}
-
-model Comment{
-  id            String @id @default(uuid())
-  userId        String
-  productId     String
-  createdAt     DateTime @default(now())
-  comment       String
-
-  user          User     @relation(fields: [userId], references: [id])
-  product       Product  @relation(fields: [productId], references: [id]) 
 }
 
 model Message {
