@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-// 📨 GET messages between two users
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const token = req.headers.get("authorization")?.split(" ")[1];
@@ -28,21 +27,26 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// ✉️ POST a new message to another user
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ id: string }> } // params is a Promise now
+) {
   try {
+    // Wait for the params to resolve
+    const { id: receiverId } = await context.params;
+
     const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!token)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
     const senderId = decoded.id;
-    const receiverId = params.id;
 
     const body = await req.json();
     const { text } = body;
 
-    if (!text || text.trim() === "") {
-      return NextResponse.json({ error: "Message text is required" }, { status: 400 });
+    if (!text) {
+      return NextResponse.json({ error: "Message text required" }, { status: 400 });
     }
 
     const message = await prisma.message.create({
@@ -54,8 +58,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
 
     return NextResponse.json(message, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error sending message:", error);
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

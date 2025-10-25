@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { verifyToken } from "@/lib/verifyToken"; // ✅ centralized auth helper
 
+// ✅ GET all products (optionally filtered by category or designer)
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -31,35 +32,33 @@ export async function GET(req: Request) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(products);
+    return NextResponse.json(products, { status: 200 });
   } catch (error: any) {
-    console.error("Error fetching products:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("❌ Error fetching products:", error);
+    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
 }
 
+// ✅ POST (create product) — only for authenticated designers
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token)
+    const user = await verifyToken(req); // centralized token verification
+    if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
-    const userId = decoded.id;
-
-    // Find the designer profile
+    // check if the user has a designer profile
     const designer = await prisma.designerProfile.findUnique({
-      where: { userId },
+      where: { userId: user.id },
     });
 
-    if (!designer)
+    if (!designer) {
       return NextResponse.json(
         { error: "Only designers can create products" },
         { status: 403 }
       );
+    }
 
-    const body = await req.json();
-    const { name, description, price, image, categoryId } = body;
+    const { name, description, price, image, categoryId } = await req.json();
 
     if (!name || !description || !price || !image || !categoryId) {
       return NextResponse.json(
@@ -77,11 +76,17 @@ export async function POST(req: Request) {
         designerProfile: { connect: { id: designer.id } },
         category: { connect: { id: categoryId } },
       },
+      include: {
+        category: true,
+        designerProfile: {
+          include: { user: { select: { name: true, email: true } } },
+        },
+      },
     });
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
-    console.error("Error creating product:", error);
+    console.error("❌ Error creating product:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

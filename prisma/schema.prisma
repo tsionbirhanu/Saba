@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   BUYER
   DESIGNER
+  ADMIN
 }
 
 enum OrderStatus {
@@ -35,7 +36,8 @@ model User {
   messagesSent    Message[]         @relation("SentMessages")
   messagesReceived Message[]        @relation("ReceivedMessages")
   favorites       Favorite[]        // Wishlist items
-  likes           Like[]            // Product likes/dislikes
+  rate            Rating[]
+  comments         Comment[]
 }
 
 model DesignerProfile {
@@ -63,9 +65,7 @@ model DesignerProfile {
 model Category {
   id          String    @id @default(uuid())
   name        String    @unique
-  description String?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
   products    Product[]
 }
@@ -87,8 +87,9 @@ model Product {
   category           Category         @relation(fields: [categoryId], references: [id])
 
   orders             Order[]
-  likes              Like[]
+  rate               Rating[]
   favorites          Favorite[]
+  comments           Comment[]
 }
 
 model Order {
@@ -116,16 +117,26 @@ model Favorite {
   product    Product  @relation(fields: [productId], references: [id])
 }
 
-model Like {
-  id         String   @id @default(uuid())
-  userId     String
-  productId  String
-  isLiked    Boolean
-  comment    String?  
-  createdAt  DateTime @default(now())
+model Rating{
+  id          String @id @default(uuid())
+  userId      String
+  productId   String
+  createdAt   DateTime @default(now())
+  rate        Int
 
-  user       User     @relation(fields: [userId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+model Comment{
+  id            String @id @default(uuid())
+  userId        String
+  productId     String
+  createdAt     DateTime @default(now())
+  comment       String
+
+  user          User     @relation(fields: [userId], references: [id])
+  product       Product  @relation(fields: [productId], references: [id]) 
 }
 
 model Message {

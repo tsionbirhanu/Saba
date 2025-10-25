@@ -1224,8 +1224,8 @@ export function BestsellerSection() {
                       <h3 className="font-bold text-base text-gray-900 mb-1">{product.name}</h3>
                       <p className="text-xs text-gray-600 mb-2">{product.artisan}</p>
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-xs text-gray-500 line-through">${product.originalPrice}</span>
-                        <span className="text-base font-bold text-primary">${product.price}</span>
+                        <span className="text-xs text-gray-500 line-through">Birr{product.originalPrice}</span>
+                        <span className="text-base font-bold text-primary">Birr{product.price}</span>
                       </div>
                     </div>
                   </Card>
@@ -1288,8 +1288,8 @@ export function BestsellerSection() {
                     <h4 className="font-semibold text-sm text-gray-900">{product.name}</h4>
                     <p className="text-xs text-gray-600">{product.artisan}</p>
                     <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs text-gray-500 line-through">${product.originalPrice}</span>
-                      <span className="text-sm font-bold text-primary">${product.price}</span>
+                      <span className="text-xs text-gray-500 line-through">Birr{product.originalPrice}</span>
+                      <span className="text-sm font-bold text-primary">Birr{product.price}</span>
                     </div>
                   </div>
                 </Card>
@@ -1327,8 +1327,8 @@ export function BestsellerSection() {
                 <p className="text-sm text-gray-600 mb-2">Saba</p>
                 <p className="font-semibold text-gray-900 mb-3">Couples Traditional Set</p>
                 <div className="flex justify-center gap-2">
-                  <span className="text-gray-400 line-through text-sm">$16.49</span>
-                  <span className="text-teal-600 font-semibold">$6.48</span>
+                  <span className="text-gray-400 line-through text-sm">Birr 10,000</span>
+                  <span className="text-teal-600 font-semibold">Birr 5000</span>
                 </div>
               </div>
             </div>
@@ -1419,8 +1419,8 @@ export function BestsellerSection() {
                       <h3 className="font-bold text-base text-gray-900 mb-1">{product.name}</h3>
                       <p className="text-xs text-gray-600 mb-2">{product.artisan}</p>
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-xs text-gray-500 line-through">${product.originalPrice}</span>
-                        <span className="text-base font-bold text-primary">${product.price}</span>
+                        <span className="text-xs text-gray-500 line-through">Birr {product.originalPrice}</span>
+                        <span className="text-base font-bold text-primary">Birr {product.price}</span>
                       </div>
                     </div>
                   </Card>
@@ -1511,8 +1511,8 @@ export function BestsellerSection() {
                     <h4 className="font-semibold text-sm text-gray-900">{product.name}</h4>
                     <p className="text-xs text-gray-600">{product.artisan}</p>
                     <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs text-gray-500 line-through">${product.originalPrice}</span>
-                      <span className="text-sm font-bold text-primary">${product.price}</span>
+                      <span className="text-xs text-gray-500 line-through">Birr{product.originalPrice}</span>
+                      <span className="text-sm font-bold text-primary">Birr{product.price}</span>
                     </div>
                   </div>
                 </Card>
@@ -1551,8 +1551,8 @@ export function BestsellerSection() {
                   </div>
 
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-gray-400 line-through text-sm">$16.48</span>
-                    <span className="text-teal-600 font-bold text-lg">$6.48</span>
+                    <span className="text-gray-400 line-through text-sm">Birr 10000</span>
+                    <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
                   </div>
 
                   {/* Color Dots */}
