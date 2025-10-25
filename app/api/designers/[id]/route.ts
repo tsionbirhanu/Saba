@@ -1,15 +1,14 @@
 // app/api/designers/[id]/route.ts
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } } | any
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // If params is a promise, unwrap it
-    const { id } = await params;
+    const { id } = await context.params; // unwrap the promise
 
     if (!id) {
       return NextResponse.json({ error: "Designer ID is required" }, { status: 400 });
@@ -38,11 +37,12 @@ export async function GET(
   }
 }
 
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const { params } = context;
-    // If params is a promise, await it
-    const { id } = await params;
+    const { id } = await context.params; // unwrap the promise
 
     const token = req.headers.get("authorization")?.split(" ")[1];
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

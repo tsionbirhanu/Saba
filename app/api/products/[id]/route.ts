@@ -1,15 +1,14 @@
+// app/api/products/[id]/route.ts
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } | Promise<{ id: string }> } // can be a Promise
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> } // params is a Promise
 ) {
   try {
-
-    const { id } = await params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
@@ -19,9 +18,7 @@ export async function GET(
       where: { id },
       include: {
         designerProfile: {
-          include: {
-            user: true,
-          },
+          include: { user: true },
         },
         category: true,
       },
@@ -32,19 +29,24 @@ export async function GET(
     }
 
     return NextResponse.json(product);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching product:", error);
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
   }
 }
 
-
-
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> } // params is a Promise
+) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { id: productId } = await context.params;
+
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const token = authHeader.split(" ")[1];
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
     const userId = decoded.id;
@@ -56,10 +58,11 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     if (!designer)
       return NextResponse.json({ error: "Only designers can delete" }, { status: 403 });
 
-    await prisma.product.delete({ where: { id: params.id } });
+    await prisma.product.delete({ where: { id: productId } });
 
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error: any) {
+    console.error("Error deleting product:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

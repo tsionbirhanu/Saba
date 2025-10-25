@@ -16,8 +16,7 @@ export async function GET(req: Request) {
     const orders = await prisma.order.findMany({
       where: {
         OR: [
-          { buyerId: decoded.id }, // Orders made by the user as buyer
-          { product: { designerId: decoded.id } } // Orders for products of the user as designer
+          { buyerId: decoded.id }// Orders for products of the user as designer
         ]
       },
       include: {

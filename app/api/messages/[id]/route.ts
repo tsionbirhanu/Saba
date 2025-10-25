@@ -1,39 +1,47 @@
+// app/api/messages/[id]/route.ts
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+// GET all messages between logged-in user and the other user
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id: otherUserId } = await context.params; // unwrap params
+
     const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!token)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
-    const otherUserId = params.id;
+    const userId = decoded.id;
 
     const messages = await prisma.message.findMany({
       where: {
         OR: [
-          { senderId: decoded.id, receiverId: otherUserId },
-          { senderId: otherUserId, receiverId: decoded.id },
+          { senderId: userId, receiverId: otherUserId },
+          { senderId: otherUserId, receiverId: userId },
         ],
       },
       orderBy: { timestamp: "asc" },
     });
 
     return NextResponse.json(messages);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching messages:", error);
-    return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
+// POST a new message
 export async function POST(
-  req: Request,
-  context: { params: Promise<{ id: string }> } // params is a Promise now
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Wait for the params to resolve
-    const { id: receiverId } = await context.params;
+    const { id: receiverId } = await context.params; // unwrap params
 
     const token = req.headers.get("authorization")?.split(" ")[1];
     if (!token)
@@ -45,16 +53,11 @@ export async function POST(
     const body = await req.json();
     const { text } = body;
 
-    if (!text) {
+    if (!text)
       return NextResponse.json({ error: "Message text required" }, { status: 400 });
-    }
 
     const message = await prisma.message.create({
-      data: {
-        senderId,
-        receiverId,
-        text,
-      },
+      data: { senderId, receiverId, text },
     });
 
     return NextResponse.json(message, { status: 201 });

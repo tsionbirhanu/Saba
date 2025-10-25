@@ -1,6 +1,7 @@
+// app/api/designers/[id]/upload_id/route.ts
 import { prisma } from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 cloudinary.config({
   cloud_name: "dbv5nikjh",
@@ -8,29 +9,48 @@ cloudinary.config({
   api_secret: "K3yw9qV5vXFF4oJQZutLGmZVbF0",
 });
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const formData = await req.formData();
-  const file = formData.get("file") as File;
-  const nationalId = formData.get("nationalId") as string;
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params; // unwrap the promise
 
-  if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const nationalId = formData.get("nationalId") as string;
 
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-  const upload = await cloudinary.uploader.upload_stream({ folder: "id_cards" });
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
 
-  const result = await new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: "id_cards" },
-      (error, result) => (error ? reject(error) : resolve(result))
-    );
-    stream.end(buffer);
-  });
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-  const updated = await prisma.designerProfile.update({
-    where: { userId: params.id },
-    data: { nationalId, idImage: (result as any).secure_url },
-  });
+    // Upload file to Cloudinary
+    const result: any = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "id_cards" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(buffer);
+    });
 
-  return NextResponse.json({ message: "ID uploaded", profile: updated });
+    // Update designer profile in DB
+    const updated = await prisma.designerProfile.update({
+      where: { userId: id },
+      data: {
+        nationalId,
+        idImage: result.secure_url,
+      },
+    });
+
+    return NextResponse.json({ message: "ID uploaded", profile: updated });
+  } catch (error: any) {
+    console.error("Error uploading ID:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
