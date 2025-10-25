@@ -21,7 +21,7 @@ const products = [
     name: "Traditional Attire",
     price: 6.48,
     originalPrice: 16.48,
-    image: "/placeholder.jpg?height=300&width=300&query=traditional-dress-1",
+    image: "/images/dress.jpg?height=300&width=300&query=traditional-dress-1",
     category: "women",
   },
   {
@@ -29,7 +29,7 @@ const products = [
     name: "Couples Clothing",
     price: 8.99,
     originalPrice: 18.99,
-    image: "/placeholder.jpg?height=300&width=300&query=couples-clothing",
+    image: "/images/dress.jpg?height=300&width=300&query=couples-clothing",
     category: "all",
   },
   {
@@ -37,7 +37,7 @@ const products = [
     name: "Men's Traditional",
     price: 9.99,
     originalPrice: 19.99,
-    image: "/placeholder.jpg?height=300&width=300&query=mens-traditional",
+    image: "/images/dress.jpg?height=300&width=300&query=mens-traditional",
     category: "men",
   },
   {
@@ -45,7 +45,7 @@ const products = [
     name: "Gabi Wrap",
     price: 12.99,
     originalPrice: 22.99,
-    image: "/placeholder.jpg?height=300&width=300&query=gabi-wrap",
+    image: "/images/dress.jpg?height=300&width=300&query=gabi-wrap",
     category: "gabi",
   },
   {
@@ -53,7 +53,7 @@ const products = [
     name: "Jewelry Set",
     price: 14.99,
     originalPrice: 24.99,
-    image: "/placeholder.jpg?height=300&width=300&query=jewelry-set",
+    image: "/images/dress.jpg?height=300&width=300&query=jewelry-set",
     category: "jewelry",
   },
   {
@@ -61,7 +61,7 @@ const products = [
     name: "Women's Dress",
     price: 7.49,
     originalPrice: 17.49,
-    image: "/placeholder.jpg?height=300&width=300&query=womens-dress",
+    image: "/images/dress.jpg?height=300&width=300&query=womens-dress",
     category: "women",
   },
   {
@@ -69,7 +69,7 @@ const products = [
     name: "Men's Shirt",
     price: 10.99,
     originalPrice: 20.99,
-    image: "/placeholder.jpg?height=300&width=300&query=mens-shirt",
+    image: "/images/dress.jpg?height=300&width=300&query=mens-shirt",
     category: "men",
   },
   {
@@ -77,7 +77,7 @@ const products = [
     name: "Beaded Necklace",
     price: 15.99,
     originalPrice: 25.99,
-    image: "/placeholder.jpg?height=300&width=300&query=beaded-necklace",
+    image: "/images/dress.jpg?height=300&width=300&query=beaded-necklace",
     category: "jewelry",
   },
   {
@@ -85,7 +85,7 @@ const products = [
     name: "Gabi Shawl",
     price: 11.99,
     originalPrice: 21.99,
-    image: "/placeholder.jpg?height=300&width=300&query=gabi-shawl",
+    image: "/images/dress.jpg?height=300&width=300&query=gabi-shawl",
     category: "gabi",
   },
   {
@@ -93,7 +93,7 @@ const products = [
     name: "Traditional Dress",
     price: 13.49,
     originalPrice: 23.49,
-    image: "/placeholder.jpg?height=300&width=300&query=traditional-dress-2",
+    image: "/images/dress.jpg?height=300&width=300&query=traditional-dress-2",
     category: "women",
   },
   {
@@ -101,7 +101,7 @@ const products = [
     name: "Men's Jacket",
     price: 19.99,
     originalPrice: 29.99,
-    image: "/placeholder.jpg?height=300&width=300&query=mens-jacket",
+    image: "/images/dress.jpg?height=300&width=300&query=mens-jacket",
     category: "men",
   },
   {
@@ -109,7 +109,7 @@ const products = [
     name: "Gold Earrings",
     price: 16.99,
     originalPrice: 26.99,
-    image: "/placeholder.jpg?height=300&width=300&query=gold-earrings",
+    image: "/images/dress.jpg?height=300&width=300&query=gold-earrings",
     category: "jewelry",
   },
 ]

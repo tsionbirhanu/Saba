@@ -32,21 +32,21 @@ const sellerProducts = [
     name: "Traditional Dress",
     price: 16.48,
     sales: 45,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "2",
     name: "Couples Clothing",
     price: 18.99,
     sales: 32,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "3",
     name: "Gabi Wrap",
     price: 22.99,
     sales: 28,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
 ]
 
@@ -73,7 +73,7 @@ export default function SellerDashboard() {
           <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
             <div className="relative w-36 h-36 rounded-full overflow-hidden bg-gray-200">
               <Image
-                src="/placeholder.jpg" // replace with seller profile image
+                src="/images/dress.jpg" // replace with seller profile image
                 alt="Seller Profile"
                 fill
                 className="object-cover"

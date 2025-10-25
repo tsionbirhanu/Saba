@@ -17,7 +17,7 @@ const productData = {
   reviews: 128,
   description: "We celebrate togetherness in style. Matching tradition, woven with love. A perfect pair, made to last.",
   colors: ["#4A90E2", "#50C878", "#FFB6C1", "#000000"],
-  images: ["/placeholder.jpg", "/placeholder.jpg", "/placeholder.jpg"],
+  images: ["/images/dress.jpg", "/images/dress.jpg", "/images/dress.jpg"],
   seller: "Saba Artisans",
   inStock: true,
   features: ["Authentic handmade design", "Premium quality fabric", "Sustainable production", "One-of-a-kind piece"],
@@ -48,7 +48,7 @@ const relatedProducts = [
     id: "2",
     name: "Traditional Attire",
     price: 6.48,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   { id: "3", name: "Gabi Wrap", price: 8.99, image: "/placeholder.jpg" },
   { id: "4", name: "Jewelry Set", price: 12.99, image: "/placeholder.jpg" },
@@ -61,7 +61,7 @@ const relatedProducts = [
 ]
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+  use(params)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [selectedColor, setSelectedColor] = useState(productData.colors[0])
@@ -90,7 +90,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div>
               <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden h-96 flex items-center justify-center relative">
                 <Image
-                  src={productData.images[selectedImage] || "/placeholder.jpg"}
+                  src={productData.images[selectedImage] || "/images/dress.jpg"}
                   alt={productData.name}
                   fill
                   className="object-cover"
@@ -106,7 +106,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     }`}
                   >
                     <Image
-                      src={img || "/placeholder.jpg"}
+                      src={img || "/images/dress.jpg"}
                       alt={`View ${idx + 1}`}
                       width={80}
                       height={80}
@@ -137,8 +137,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {/* Price */}
               <div className="mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-primary">${productData.price}</span>
-                  <span className="text-lg text-gray-400 line-through">${productData.originalPrice}</span>
+                  <span className="text-3xl font-bold text-primary">Birr{productData.price}</span>
+                  <span className="text-lg text-gray-400 line-through">Birr{productData.originalPrice}</span>
                   <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
                     {Math.round(((productData.originalPrice - productData.price) / productData.originalPrice) * 100)}%
                     OFF
@@ -258,14 +258,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   <div className="group cursor-pointer">
                     <div className="bg-gray-100 rounded-lg overflow-hidden mb-3 h-48 relative">
                       <Image
-                        src={product.image || "/placeholder.svg"}
+                        src={product.image || "/images/dress.svg"}
                         alt={product.name}
                         fill
                         className="object-cover group-hover:scale-105 transition"
                       />
                     </div>
                     <h3 className="font-medium text-gray-900 group-hover:text-primary transition">{product.name}</h3>
-                    <p className="text-primary font-bold">${product.price}</p>
+                    <p className="text-primary font-bold">Birr{product.price}</p>
                   </div>
                 </Link>
               ))}

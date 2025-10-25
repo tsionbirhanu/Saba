@@ -32,56 +32,56 @@ const products = [
     name: "Traditional Dress",
     price: 6.48,
     originalPrice: 16.48,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "2",
     name: "Elegant Gown",
     price: 8.99,
     originalPrice: 18.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "3",
     name: "Casual Wear",
     price: 5.99,
     originalPrice: 15.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "4",
     name: "Formal Attire",
     price: 12.99,
     originalPrice: 22.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "5",
     name: "Summer Collection",
     price: 7.49,
     originalPrice: 17.49,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "6",
     name: "Winter Wear",
     price: 10.99,
     originalPrice: 20.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "7",
     name: "Party Dress",
     price: 14.99,
     originalPrice: 24.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
   {
     id: "8",
     name: "Casual Outfit",
     price: 9.99,
     originalPrice: 19.99,
-    image: "/placeholder.jpg",
+    image: "/images/dress.jpg",
   },
 ]
 
@@ -213,8 +213,8 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                           {product.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-primary font-bold">${product.price}</span>
-                          <span className="text-gray-400 line-through text-sm">${product.originalPrice}</span>
+                          <span className="text-primary font-bold">Birr{product.price}</span>
+                          <span className="text-gray-400 line-through text-sm">Birr{product.originalPrice}</span>
                         </div>
                       </div>
                     </div>
