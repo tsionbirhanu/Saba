@@ -40,7 +40,7 @@ export default function RegisterPage() {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8 border-4 border-blue-500">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
           {/* Header */}
           <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">Welcome!</h1>
           <p className="text-center text-gray-600 text-sm mb-8">Let&apos;s set up your account</p>
@@ -53,7 +53,7 @@ export default function RegisterPage() {
                   num < step
                     ? "bg-gray-700 text-white"
                     : num === step
-                      ? "bg-blue-500 text-white ring-2 ring-blue-300"
+                      ? "bg-[#800020] text-white ring-2 ring-[#c04050]"
                       : "bg-gray-300 text-gray-600"
                 }`}
               >
@@ -71,7 +71,7 @@ export default function RegisterPage() {
                   setUserType("buyer")
                   handleNext()
                 }}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-left font-semibold text-gray-900"
+                className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
                 👤 I&apos;m a Buyer
               </button>
@@ -80,7 +80,7 @@ export default function RegisterPage() {
                   setUserType("seller")
                   handleNext()
                 }}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 transition text-left font-semibold text-gray-900"
+                className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
                 🏪 I&apos;m a Seller
               </button>
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
               />
             </div>
           )}
@@ -112,7 +112,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3"
+                className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent mb-3"
               />
               <input
                 type="password"
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Confirm password"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
               />
             </div>
           )}
@@ -137,7 +137,7 @@ export default function RegisterPage() {
                 value={userType === "seller" ? formData.businessName : formData.fullName}
                 onChange={handleInputChange}
                 placeholder={userType === "seller" ? "Your business name" : "Your full name"}
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
               />
             </div>
           )}
@@ -154,7 +154,7 @@ export default function RegisterPage() {
                     value={formData.nationalId}
                     onChange={handleInputChange}
                     placeholder="Enter your national ID"
-                    className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
                   />
                   <p className="text-xs text-gray-500 mt-2">Your national ID is required for seller verification</p>
                 </>
@@ -174,14 +174,14 @@ export default function RegisterPage() {
               onClick={handlePrev}
               disabled={step === 1}
               variant="outline"
-              className="flex-1 py-3 bg-transparent border-gray-300"
+              className="flex-1 py-3 bg-transparent border border-[#800020]"
             >
               Back
             </Button>
             <Button
               onClick={handleNext}
               disabled={step === 5 && userType === "buyer"}
-              className="flex-1 bg-red-700 hover:bg-red-800 text-white py-3"
+              className="flex-1 bg-[#800020] hover:bg-[#660018] text-white py-3"
             >
               {step === 5 ? "Complete" : "Next"}
             </Button>
@@ -190,7 +190,7 @@ export default function RegisterPage() {
           {/* Login Link */}
           <p className="text-center text-gray-600 text-sm mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-red-700 font-semibold hover:underline">
+            <Link href="/login" className="text-[#800020] font-semibold hover:underline">
               Login
             </Link>
           </p>

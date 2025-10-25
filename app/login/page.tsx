@@ -17,12 +17,12 @@ export default function LoginPage() {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8 border-4 border-blue-500">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
           {/* Header */}
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">Login</h1>
 
           {/* Login with Google */}
-          <button className="w-full flex items-center justify-center gap-2 border-2 border-red-600 rounded-lg py-3 mb-6 hover:bg-red-50 transition font-medium text-gray-700">
+          <button className="w-full flex items-center justify-center gap-2 border-2 border-[#800020] rounded-lg py-3 mb-6 hover:bg-red-50 transition font-medium text-gray-700">
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
                 fill="#EA4335"
@@ -61,7 +61,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email"
-              className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
             />
           </div>
 
@@ -72,19 +72,19 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter Password"
-              className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#800020] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
             />
           </div>
 
           {/* Login Button */}
-          <Button className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-semibold mb-4 text-base">
+          <Button className="w-full bg-[#800020] hover:bg-[#660018] text-white py-3 rounded-lg font-semibold mb-4 text-base">
             Login
           </Button>
 
           {/* Sign Up Link */}
           <p className="text-center text-gray-600 text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-red-700 font-semibold hover:underline">
+            <Link href="/register" className="text-[#800020] font-semibold hover:underline">
               Sign up
             </Link>
           </p>

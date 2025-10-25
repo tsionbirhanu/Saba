@@ -15,18 +15,16 @@ export function Header() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo - Made significantly larger with left margin */}
+            {/* Logo */}
             <Link href="/" className="flex items-center ml-4">
-              <div className="flex items-center">
-                <Image
-                  src="/images/sabba.svg"
-                  alt="Saba Text Logo"
-                  width={180}
-                  height={63}
-                  className="h-12 w-auto"
-                  priority
-                />
-              </div>
+              <Image
+                src="/images/sabba.svg"
+                alt="Saba Text Logo"
+                width={180}
+                height={63}
+                className="h-12 w-auto"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -35,30 +33,23 @@ export function Header() {
                 Home
               </Link>
 
-              {/* Shop with Dropdown */}
-              <div className="relative">
-                <button
-                  className="flex items-center gap-1 text-sm text-gray-700 hover:text-primary transition"
-                  onMouseEnter={() => setIsShopOpen(true)}
-                  onMouseLeave={() => setIsShopOpen(false)}
-                >
+              {/* Shop Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsShopOpen(true)}
+                onMouseLeave={() => setIsShopOpen(false)}
+              >
+                <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-primary transition">
                   Shop
                   <ChevronDown className="w-4 h-4" />
                 </button>
 
                 {isShopOpen && (
-                  <div
-                    className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
-                    onMouseEnter={() => setIsShopOpen(true)}
-                    onMouseLeave={() => setIsShopOpen(false)}
-                  >
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
                     <Link href="/shop/all-products" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       All Products
                     </Link>
-                    <Link
-                      href="/shop/women-clothes"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
+                    <Link href="/shop/women-clothes" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Women Clothes
                     </Link>
                     <Link href="/shop/men-clothes" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -148,26 +139,20 @@ export function Header() {
 
                 {isShopOpen && (
                   <div className="pl-6 py-1 space-y-1 bg-gray-50">
-                    <Link
-                      href="/shop/all-products"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                    >
+                    <Link href="/shop/all-products" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
                       All Products
                     </Link>
-                    <Link
-                      href="/shop/new-arrivals"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                    >
-                      New Arrivals
+                    <Link href="/shop/women-clothes" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                      Women Clothes
                     </Link>
-                    <Link
-                      href="/shop/best-sellers"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                    >
-                      Best Sellers
+                    <Link href="/shop/men-clothes" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                      Men Clothes
                     </Link>
-                    <Link href="/shop/sale" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                      Sale
+                    <Link href="/shop/jewelry" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                      Jewelry
+                    </Link>
+                    <Link href="/shop/gabi" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                      Gabi
                     </Link>
                   </div>
                 )}

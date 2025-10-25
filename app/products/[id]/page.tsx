@@ -17,7 +17,7 @@ const productData = {
   reviews: 128,
   description: "We celebrate togetherness in style. Matching tradition, woven with love. A perfect pair, made to last.",
   colors: ["#4A90E2", "#50C878", "#FFB6C1", "#000000"],
-  images: ["/images/dress.jpg", "/images/dress.jpg", "/images/dress.jpg"],
+  images: ["/images/dress.jpg", "/images/dress2.jpg", "/images/dress3.jpg"],
   seller: "Saba Artisans",
   inStock: true,
   features: ["Authentic handmade design", "Premium quality fabric", "Sustainable production", "One-of-a-kind piece"],
@@ -50,13 +50,13 @@ const relatedProducts = [
     price: 6.48,
     image: "/images/dress.jpg",
   },
-  { id: "3", name: "Gabi Wrap", price: 8.99, image: "/placeholder.jpg" },
-  { id: "4", name: "Jewelry Set", price: 12.99, image: "/placeholder.jpg" },
+  { id: "3", name: "Gabi Wrap", price: 8.99, image: "/images/gabi2.jpg" },
+  { id: "4", name: "Jewelry Set", price: 12.99, image: "/images/rings2.jpg" },
   {
     id: "5",
     name: "Men's Traditional",
     price: 9.99,
-    image: "/placeholder.jpg",
+    image: "/images/men4.jpg",
   },
 ]
 
