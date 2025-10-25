@@ -15,14 +15,9 @@ const buyerOrders = [
 ]
 
 const wishlistItems = [
-  {
-    id: "1",
-    name: "Traditional Dress",
-    price: 16.48,
-    image: "/images/dress.jpg?height=150&width=150&query=traditional-dress",
-  },
-  { id: "2", name: "Gabi Wrap", price: 22.99, image: "/images/dress.jpg?height=150&width=150&query=gabi-wrap" },
-  { id: "3", name: "Jewelry Set", price: 24.99, image: "/images/dress.jpg?height=150&width=150&query=jewelry-set" },
+  { id: "1", name: "Traditional Dress", price: 16.48, image: "/images/dress.jpg" },
+  { id: "2", name: "Gabi Wrap", price: 22.99, image: "/images/gabi-wrap.jpg" },
+  { id: "3", name: "Jewelry Set", price: 24.99, image: "/images/jewelry-set.jpg" },
 ]
 
 export default function BuyerDashboard() {
