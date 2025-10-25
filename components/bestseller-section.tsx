@@ -546,8 +546,8 @@ export function BestsellerSection() {
               <p className="text-gray-900 font-semibold text-lg leading-snug">Amina Kedir</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 500</span>
+                <span className="text-teal-600 font-bold">Birr 425</span>
               </div>
             </div>
 
@@ -564,8 +564,8 @@ export function BestsellerSection() {
               <p className="text-gray-900 font-semibold text-lg leading-snug">Hana Badge</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 778</span>
+                <span className="text-teal-600 font-bold">Birr 608</span>
               </div>
             </div>
 
