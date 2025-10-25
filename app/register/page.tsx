@@ -61,7 +61,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
           {/* Header */}
           <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">Welcome!</h1>
-          <p className="text-center text-gray-600 text-sm mb-8">Let's set up your account</p>
+          <p className="text-center text-gray-600 text-sm mb-8">Let&apos;s set up your account</p>
 
           {/* Step Indicators */}
           <div className="flex justify-center gap-3 mb-8">
@@ -89,13 +89,13 @@ export default function RegisterPage() {
                 onClick={() => { setUserType("buyer"); handleNext() }}
                 className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
-                I'm a Buyer
+                I&apos;m a Buyer
               </button>
               <button
                 onClick={() => { setUserType("seller"); handleNext() }}
                 className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
-                I'm a Seller
+                I&apos;m a Seller
               </button>
             </div>
           )}
@@ -185,13 +185,14 @@ export default function RegisterPage() {
               onClick={handlePrev}
               disabled={step === 1}
               variant="outline"
-              className="flex-1 py-3 bg-transparent border border-[#800020]"
+              className="flex-1 py-3 bg-transparent border-gray-300"
             >
               Back
             </Button>
             <Button
               onClick={handleNext}
-              className="flex-1 bg-[#800020] hover:bg-[#660018] text-white py-3"
+              disabled={step === 5 && userType === "buyer"}
+              className="flex-1 bg-red-700 hover:bg-red-800 text-white py-3"
             >
               {step === 5 ? "Complete" : "Next"}
             </Button>
@@ -200,7 +201,7 @@ export default function RegisterPage() {
           {/* Login Link */}
           <p className="text-center text-gray-600 text-sm mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-[#800020] font-semibold hover:underline">
+            <Link href="/login" className="text-red-700 font-semibold hover:underline">
               Login
             </Link>
           </p>

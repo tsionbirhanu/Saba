@@ -14,10 +14,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  // Simulated login function
+
   const handleLogin = () => {
-    // Here you could add real auth logic later
-    router.push("/") // Redirect to home page
+    router.push("/") 
   }
 
   return (
@@ -37,7 +36,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-900">Login</h1>
 
-          {/* Google Login */}
+
           <button
             onClick={handleLogin}
             className="w-full flex items-center justify-center gap-2 border-2 border-[#800020] rounded-lg py-3 mb-6 hover:bg-red-50 transition font-medium text-gray-700"
@@ -60,7 +59,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-          {/* Email Input */}
           <div className="mb-4">
             <input
               type="email"
@@ -93,7 +91,7 @@ export default function LoginPage() {
           {/* Sign Up Link */}
           <p className="text-center text-gray-600 text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-[#800020] font-semibold hover:underline">
+            <Link href="/register" className="text-red-700 font-semibold hover:underline">
               Sign up
             </Link>
           </p>
