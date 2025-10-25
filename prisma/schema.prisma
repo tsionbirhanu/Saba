@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  BUYER
+  DESIGNER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id              String            @id @default(uuid())
+  name            String
+  email           String            @unique
+  password        String
+  phoneNumber     String?
+  role            Role              @default(BUYER)
+  profileImage    String?           // Cloudinary profile image
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  designerProfile DesignerProfile?  // Optional: only for designers
+  orders          Order[]           // Orders placed by this user
+  messagesSent    Message[]         @relation("SentMessages")
+  messagesReceived Message[]        @relation("ReceivedMessages")
+  favorites       Favorite[]        // Wishlist items
+  likes           Like[]            // Product likes/dislikes
+}
+
+model DesignerProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+
+  bio             String?
+  skills          String?
+  portfolio       String?
+  socialLinks     String?
+  contactInfo     String?
+
+  nationalId      String?           // Ethiopian national ID number
+  idImage         String?           // Cloudinary URL of scanned ID
+  isVerified      Boolean  @default(false)
+  verifiedAt      DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  products        Product[]          // All products by this designer
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id                 String           @id @default(uuid())
+  name               String
+  description        String
+  price              Float
+  stock              Int              @default(1)
+  image              String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  designerProfileId  String
+  designerProfile    DesignerProfile  @relation(fields: [designerProfileId], references: [id])
+
+  categoryId         String
+  category           Category         @relation(fields: [categoryId], references: [id])
+
+  orders             Order[]
+  likes              Like[]
+  favorites          Favorite[]
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  productId    String
+  buyerId      String
+  quantity     Int          @default(1)
+  totalAmount  Float
+  status       OrderStatus  @default(PENDING)
+  paymentRef   String?      // Chapa or Stripe transaction ref
+  paidAt       DateTime?
+  createdAt    DateTime     @default(now())
+
+  product      Product      @relation(fields: [productId], references: [id])
+  buyer        User         @relation(fields: [buyerId], references: [id])
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  userId     String
+  productId  String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  userId     String
+  productId  String
+  isLiked    Boolean
+  comment    String?  
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  text       String
+  timestamp  DateTime @default(now())
+
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
