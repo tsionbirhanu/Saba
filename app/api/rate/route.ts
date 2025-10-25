@@ -1,43 +1,59 @@
 // app/api/rate/route.ts
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // 1. Get the Bearer token
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    const token = authHeader.split(" ")[1];
+    if (!token)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // 2. Decode the token
+    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { id: string };
     const userId = decoded.id;
 
+    // 3. Parse request body
     const body = await req.json();
-    const { productId, rate } = body;
+    const { productId, rate } = body as { productId: string; rate: number };
 
-    if (!productId || rate === undefined) {
-      return NextResponse.json({ error: "Missing productId or rate" }, { status: 400 });
-    }
+    if (!productId || rate === undefined)
+      return NextResponse.json(
+        { error: "Missing productId or rate" },
+        { status: 400 }
+      );
 
-    let rating;
-    const existing = await prisma.rating.findFirst({
+    // 4. Check if a rating already exists
+    const existingRating = await prisma.rating.findFirst({
       where: { userId, productId },
     });
 
-    if (existing) {
+    let rating;
+    if (existingRating) {
+      // Update existing rating
       rating = await prisma.rating.update({
-        where: { id: existing.id },
-        data: { rate: parseInt(rate) },
+        where: { id: existingRating.id },
+        data: { rate },
       });
     } else {
+      // Create new rating
       rating = await prisma.rating.create({
-        data: { userId, productId, rate: parseInt(rate) },
+        data: { userId, productId, rate },
       });
     }
 
+    // 5. Return the rating
     return NextResponse.json(rating, { status: 201 });
   } catch (error: any) {
     console.error("Error recording rating:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to record rating" },
+      { status: 500 }
+    );
   }
 }
