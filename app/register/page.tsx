@@ -35,15 +35,15 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image src="/placeholder.jpg" alt="Background" fill className="object-cover blur-md" priority />
+        <Image src="/traditional-dress-woman.jpg" alt="Background" fill className="object-cover blur-md" priority />
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8 border-4 border-blue-500">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
           {/* Header */}
           <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">Welcome!</h1>
-          <p className="text-center text-gray-600 text-sm mb-8">Let&apos;s set up your account</p>
+          <p className="text-center text-gray-600 text-sm mb-8">Let's set up your account</p>
 
           <div className="flex justify-center gap-3 mb-8">
             {[1, 2, 3, 4, 5].map((num) => (
@@ -73,7 +73,7 @@ export default function RegisterPage() {
                 }}
                 className="w-full p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition text-left font-semibold text-gray-900"
               >
-                👤 I&apos;m a Buyer
+                I'm a Buyer
               </button>
               <button
                 onClick={() => {
@@ -82,7 +82,7 @@ export default function RegisterPage() {
                 }}
                 className="w-full p-4 border-2 border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 transition text-left font-semibold text-gray-900"
               >
-                🏪 I&apos;m a Seller
+                I'm a Seller
               </button>
             </div>
           )}
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
           )}
@@ -112,7 +112,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-3"
               />
               <input
                 type="password"
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Confirm password"
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
           )}
@@ -137,7 +137,7 @@ export default function RegisterPage() {
                 value={userType === "seller" ? formData.businessName : formData.fullName}
                 onChange={handleInputChange}
                 placeholder={userType === "seller" ? "Your business name" : "Your full name"}
-                className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
           )}
@@ -154,14 +154,12 @@ export default function RegisterPage() {
                     value={formData.nationalId}
                     onChange={handleInputChange}
                     placeholder="Enter your national ID"
-                    className="w-full px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
-                  <p className="text-xs text-gray-500 mt-2">Your national ID is required for seller verification</p>
                 </>
               ) : (
                 <div className="text-center py-6">
-                  <div className="text-4xl mb-4">✓</div>
-                  <p className="text-gray-700 font-semibold mb-2">Account created successfully!</p>
+                  <p className="text-gray-700 font-semibold mb-4">Account created successfully!</p>
                   <p className="text-gray-600 text-sm">Welcome to Saba, {formData.fullName}</p>
                 </div>
               )}
@@ -170,18 +168,13 @@ export default function RegisterPage() {
 
           {/* Navigation Buttons */}
           <div className="flex gap-3 mt-8">
-            <Button
-              onClick={handlePrev}
-              disabled={step === 1}
-              variant="outline"
-              className="flex-1 py-3 bg-transparent border-gray-300"
-            >
+            <Button onClick={handlePrev} disabled={step === 1} variant="outline" className="flex-1 py-3 bg-transparent">
               Back
             </Button>
             <Button
               onClick={handleNext}
-              disabled={step === 5 && userType === "buyer"}
-              className="flex-1 bg-red-700 hover:bg-red-800 text-white py-3"
+              disabled={step === 5}
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3"
             >
               {step === 5 ? "Complete" : "Next"}
             </Button>
@@ -190,7 +183,7 @@ export default function RegisterPage() {
           {/* Login Link */}
           <p className="text-center text-gray-600 text-sm mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-red-700 font-semibold hover:underline">
+            <Link href="/login" className="text-blue-600 font-semibold hover:underline">
               Login
             </Link>
           </p>
