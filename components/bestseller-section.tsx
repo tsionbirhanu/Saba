@@ -49,7 +49,7 @@ const bestsellerProducts = [
   },
   {
     id: "6",
-    name: "Sitra Tcha",
+    name: "Sitra Taha",
     artisan: "Artisan Weaver",
     price: 6.48,
     originalPrice: 16.48,
@@ -229,7 +229,6 @@ export function BestsellerSection() {
                 </div>
               </div>
 
-              {/* Full width black underline for mobile */}
               <div className="w-full h-0.5 bg-black"></div>
             </div>
 
@@ -276,14 +275,13 @@ export function BestsellerSection() {
       <section className="py-12 px-4 md:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            {/* Left Column - Large Image */}
             <div className="space-y-6">
               <div className="relative h-96 md:h-[500px] rounded-lg overflow-hidden">
                 <Image src="/images/couple.jpg" alt="Couples Clothing" fill className="object-cover" />
               </div>
             </div>
 
-            {/* Right Column - Content */}
+
             <div className="space-y-6">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Couples Clothing</h2>
@@ -338,15 +336,11 @@ export function BestsellerSection() {
       {/* Bestseller Men Cloth Section - Reversed Layout */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main Content Grid - Reversed order */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            {/* Left Side - Content Area */}
             <div className="lg:col-span-2 flex flex-col order-2 lg:order-1">
-              {/* BESTSELLER MEN CLOTH Title with full width underline */}
               <div className="text-center lg:text-left mb-8">
                 <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
                   <h1 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">BESTSELLER MEN CLOTH</h1>
-                  {/* Arrows at the end of text with margin left */}
                   <div className="flex items-center gap-1 ml-4">
                     <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -361,7 +355,6 @@ export function BestsellerSection() {
                 <div className="w-full h-0.5 bg-black mt-2"></div>
               </div>
 
-              {/* Small Products Grid - Full height equal to big image */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow">
                 {bestsellerMenProducts.map((product) => (
                   <Card
@@ -374,7 +367,6 @@ export function BestsellerSection() {
                       window.location.href = `/products/${product.id}`
                     }}
                   >
-                    {/* Product image - full height display without cropping */}
                     <div className="relative flex-grow bg-gray-100 min-h-[180px] flex items-center justify-center">
                       <div className="relative w-full h-full">
                         <Image
@@ -404,7 +396,6 @@ export function BestsellerSection() {
             {/* Right Side - Tall Big Image with Text Overlay */}
             <div className="lg:col-span-1 flex justify-center order-1 lg:order-2">
               <Card className="overflow-hidden border-0 shadow-lg w-full max-w-xs relative">
-                {/* Text overlay at the top of the big image */}
                 <div className="absolute top-4 left-4 z-10 text-black">
                   <div className="flex flex-col space-y-1">
                     <span className="font-medium text-sm">FINNITURE</span>
@@ -412,7 +403,6 @@ export function BestsellerSection() {
                   </div>
                 </div>
 
-                {/* Big tall image - full height display without cropping */}
                 <div className="relative h-[600px] bg-gray-50 flex items-center justify-center">
                   <div className="relative w-full h-full">
                     <Image
@@ -425,14 +415,12 @@ export function BestsellerSection() {
                     />
                   </div>
                 </div>
-                {/* No product info section for big image */}
               </Card>
             </div>
           </div>
 
           {/* Mobile Layout */}
           <div className="lg:hidden mt-8">
-            {/* Mobile Header with arrows and full width underline */}
             <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-4 text-sm text-black mb-2">
                 <span className="font-medium">FINNITURE</span>
@@ -441,7 +429,6 @@ export function BestsellerSection() {
 
               <div className="flex items-center justify-center gap-2 mb-4">
                 <h1 className="text-2xl font-bold text-gray-900 uppercase">BESTSELLER MEN CLOTH</h1>
-                {/* Arrows at the end of text for mobile with margin left */}
                 <div className="flex items-center gap-1 ml-4">
                   <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -456,7 +443,6 @@ export function BestsellerSection() {
               <div className="w-full h-0.5 bg-black"></div>
             </div>
 
-            {/* Mobile Products Grid */}
             <div className="grid grid-cols-2 gap-3">
               {bestsellerMenProducts.slice(0, 4).map((product) => (
                 <Card
@@ -497,25 +483,19 @@ export function BestsellerSection() {
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] items-center gap-8">
-            {/* Left Side - Text + Small Card */}
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-              {/* Heading + Description */}
               <div>
                 <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">GET YOUR GABI!</h1>
                 <p className="text-gray-600 text-base leading-relaxed">Wrap yourself in comfort and culture.</p>
                 <p className="text-gray-600 text-base leading-relaxed">It&apos;s style with a story.</p>
               </div>
 
-              {/* Small Product Card */}
               <div className="bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg w-full max-w-xs p-5 border border-gray-100">
-                {/* Product Image */}
                 <div className="relative h-44 w-full rounded-md overflow-hidden mb-4">
                   <Image src="/images/gabi2.jpg" alt="Gabi Folded" fill className="object-cover" />
                 </div>
 
-                {/* Product Info */}
                 <div className="text-center space-y-2">
                   <p className="text-gray-800 font-semibold text-lg">Saba</p>
 
@@ -528,7 +508,6 @@ export function BestsellerSection() {
                     <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
                   </div>
 
-                  {/* Color Dots */}
                   <div className="flex justify-center gap-2 mt-2">
                     <span className="w-3 h-3 rounded-full bg-teal-500"></span>
                     <span className="w-3 h-3 rounded-full bg-orange-500"></span>
@@ -539,7 +518,6 @@ export function BestsellerSection() {
               </div>
             </div>
 
-            {/* Right Side - Big Image */}
             <div className="relative h-[500px] md:h-[600px] rounded-lg overflow-hidden">
               <Image src="/images/gabi.jpg" alt="Gabi Traditional Cloth" fill className="object-cover object-center" />
             </div>
@@ -553,11 +531,9 @@ export function BestsellerSection() {
             JEWELRY PRODUCTS
           </h2>
 
-          {/* Jewelry Product Grid */}
+
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
-            {/* Product 1: Amina Kedir - Necklace 1 */}
             <div className="flex flex-col items-start">
-              {/* Product Image Container */}
               <div className="relative w-full aspect-[4/5] overflow-hidden mb-3">
                 <Image
                   src="/images/rings.png"
@@ -566,18 +542,16 @@ export function BestsellerSection() {
                   className="object-cover"
                 />
               </div>
-              {/* Product Details */}
+
               <p className="text-gray-900 font-semibold text-lg leading-snug">Amina Kedir</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 500</span>
+                <span className="text-teal-600 font-bold">Birr 425</span>
               </div>
             </div>
 
-            {/* Product 2: Hana Badge - Necklace 2 */}
             <div className="flex flex-col items-start">
-              {/* Product Image Container */}
               <div className="relative w-full aspect-[4/5] overflow-hidden mb-3">
                 <Image
                   src="/images/rings2.jpg"
@@ -590,14 +564,12 @@ export function BestsellerSection() {
               <p className="text-gray-900 font-semibold text-lg leading-snug">Hana Badge</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 778</span>
+                <span className="text-teal-600 font-bold">Birr 608</span>
               </div>
             </div>
 
-            {/* Product 3: Sitra Teha - Cuffs/Bracelets */}
             <div className="flex flex-col items-start">
-              {/* Product Image Container */}
               <div className="relative w-full aspect-[4/5] overflow-hidden mb-3">
                 <Image
                   src="/images/rings3.jpg"
@@ -610,14 +582,13 @@ export function BestsellerSection() {
               <p className="text-gray-900 font-semibold text-lg leading-snug">Sitra Teha</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 140</span>
+                <span className="text-teal-600 font-bold">Birr 200</span>
               </div>
             </div>
 
-            {/* Product 4: Hermella Kassahun - Rings */}
             <div className="flex flex-col items-start">
-              {/* Product Image Container */}
+
               <div className="relative w-full aspect-[4/5] overflow-hidden mb-3">
                 <Image
                   src="/images/rings4.jpg"
@@ -626,12 +597,12 @@ export function BestsellerSection() {
                   className="object-cover"
                 />
               </div>
-              {/* Product Details */}
+    
               <p className="text-gray-900 font-semibold text-lg leading-snug">Hermella Kassahun</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500 line-through">$16.48</span>
-                <span className="text-teal-600 font-bold">$6.48</span>
+                <span className="text-gray-500 line-through">Birr 50</span>
+                <span className="text-teal-600 font-bold">Birr 100</span>
               </div>
             </div>
           </div>
@@ -639,7 +610,6 @@ export function BestsellerSection() {
           <section className="py-16 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 text-center">
               <div className="flex justify-center items-center gap-8 md:gap-12">
-                {/* TikTok */}
                 <a
                   href="#"
                   target="_blank"
@@ -656,7 +626,6 @@ export function BestsellerSection() {
                   />
                 </a>
 
-                {/* Instagram */}
                 <a
                   href="#"
                   target="_blank"
@@ -673,7 +642,6 @@ export function BestsellerSection() {
                   />
                 </a>
 
-                {/* Telegram */}
                 <a
                   href="#"
                   target="_blank"
@@ -690,7 +658,6 @@ export function BestsellerSection() {
                   />
                 </a>
 
-                {/* YouTube */}
                 <a
                   href="#"
                   target="_blank"
@@ -714,7 +681,7 @@ export function BestsellerSection() {
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
+ 
           <div className="text-center mb-12">
             <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-2">Practice Advice</p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">Meet the Weavers!</h2>
@@ -722,13 +689,10 @@ export function BestsellerSection() {
 
           {/* Weavers Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Weaver Card 1 */}
             <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-              {/* Weaver Image */}
               <div className="relative w-full h-64">
                 <Image src="/images/girl1.png" alt="Amina Kedir" fill className="object-cover " />
               </div>
-              {/* Weaver Info */}
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Amina Kedir</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -737,7 +701,6 @@ export function BestsellerSection() {
                   pride.
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
-                  {/* Calendar Icon */}
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="none"
@@ -753,7 +716,6 @@ export function BestsellerSection() {
                     ></path>
                   </svg>
                   <span>22 April 2021</span>
-                  {/* Star Ratings */}
                   <div className="flex ml-auto space-x-0.5">
                     {[...Array(3)].map((_, i) => (
                       <svg
@@ -796,11 +758,9 @@ export function BestsellerSection() {
 
             {/* Weaver Card 2 (using girl2.jpg) */}
             <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-              {/* Weaver Image */}
               <div className="relative w-full h-64">
                 <Image src="/images/girl2.png" alt="Amina Kedir" fill className="object-cover object-top" />
               </div>
-              {/* Weaver Info */}
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Amina Kedir</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -809,7 +769,6 @@ export function BestsellerSection() {
                   pride.
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
-                  {/* Calendar Icon */}
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="none"
@@ -866,18 +825,16 @@ export function BestsellerSection() {
               </div>
             </div>
 
-            {/* Weaver Card 3 (using girl3.jpg) */}
+ 
             <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-              {/* Weaver Image */}
               <div className="relative w-full h-64">
                 <Image
-                  src="/images/girl3.jpg" // Note: Corrected typo from "girl3.ljp" to "girl3.jpg"
+                  src="/images/girl3.jpg" 
                   alt="Amina Kedir"
                   fill
                   className="object-cover object-top"
                 />
               </div>
-              {/* Weaver Info */}
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Amina Kedir</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -902,7 +859,6 @@ export function BestsellerSection() {
                     ></path>
                   </svg>
                   <span>22 April 2021</span>
-                  {/* Star Ratings */}
                   <div className="flex ml-auto space-x-0.5">
                     {[...Array(3)].map((_, i) => (
                       <svg
