@@ -1,13 +1,14 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [step, setStep] = useState(1)
   const [userType, setUserType] = useState<"buyer" | "seller" | null>(null)
   const [formData, setFormData] = useState({
@@ -26,16 +27,33 @@ export default function RegisterPage() {
 
   const handleNext = () => {
     if (step < 5) setStep(step + 1)
+    else handleComplete() // On step 5, complete registration
   }
 
   const handlePrev = () => {
     if (step > 1) setStep(step - 1)
   }
 
+  // Simulated registration completion
+  const handleComplete = () => {
+    // Here you could add actual API call to register user
+    if (userType === "buyer") {
+      router.push("/") // redirect buyers to home
+    } else if (userType === "seller") {
+      router.push("/seller-dashboard") // redirect sellers to dashboard
+    }
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image src="/placeholder.jpg" alt="Background" fill className="object-cover blur-md" priority />
+        <Image
+          src="/placeholder.jpg"
+          alt="Background"
+          fill
+          className="object-cover blur-md"
+          priority
+        />
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
@@ -45,6 +63,7 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">Welcome!</h1>
           <p className="text-center text-gray-600 text-sm mb-8">Let&apos;s set up your account</p>
 
+          {/* Step Indicators */}
           <div className="flex justify-center gap-3 mb-8">
             {[1, 2, 3, 4, 5].map((num) => (
               <div
@@ -62,24 +81,18 @@ export default function RegisterPage() {
             ))}
           </div>
 
-          {/* Step 1: User Type Selection */}
+          {/* Step 1: User Type */}
           {step === 1 && (
             <div className="space-y-4">
               <p className="text-center text-gray-700 font-semibold mb-6">Are you a buyer or seller?</p>
               <button
-                onClick={() => {
-                  setUserType("buyer")
-                  handleNext()
-                }}
+                onClick={() => { setUserType("buyer"); handleNext() }}
                 className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
                 👤 I&apos;m a Buyer
               </button>
               <button
-                onClick={() => {
-                  setUserType("seller")
-                  handleNext()
-                }}
+                onClick={() => { setUserType("seller"); handleNext() }}
                 className="w-full p-4 border border-[#800020] rounded-lg hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left font-semibold text-gray-900"
               >
                 🏪 I&apos;m a Seller
@@ -142,7 +155,7 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Step 5: National ID (Sellers only) or Confirmation (Buyers) */}
+          {/* Step 5: National ID for seller / Confirmation for buyer */}
           {step === 5 && (
             <div className="space-y-4">
               {userType === "seller" ? (
@@ -180,7 +193,6 @@ export default function RegisterPage() {
             </Button>
             <Button
               onClick={handleNext}
-              disabled={step === 5 && userType === "buyer"}
               className="flex-1 bg-[#800020] hover:bg-[#660018] text-white py-3"
             >
               {step === 5 ? "Complete" : "Next"}
