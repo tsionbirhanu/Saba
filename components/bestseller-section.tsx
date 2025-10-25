@@ -11,100 +11,100 @@ const bestsellerProducts = [
     id: "1",
     name: "Amina Kedir",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
+    price: 4500,
+    originalPrice: 6458,
     image: "/images/dress.jpg",
   },
   {
     id: "2",
     name: "Hana Badege",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
+    price: 5000,
+    originalPrice: 6700,
     image: "/images/tr2.jpg",
   },
   {
     id: "3",
-    name: "Sitra Tcha",
+    name: "Sitra Taha",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
+    price: 5300,
+    originalPrice: 5700,
     image: "/images/traditional.jpg",
   },
   {
     id: "4",
-    name: "Amina Kedir",
+    name: "Alem Zewdu",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
-    image: "/images/tr2.jpg",
+    price: 3000,
+    originalPrice: 4500,
+    image: "/images/dress4.jpg",
   },
   {
     id: "5",
-    name: "Hana Badege",
+    name: "Beza Alemayehu",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
-    image: "/images/traditional.jpg",
+    price:4000,
+    originalPrice: 5700,
+    image: "/images/dress5.jpg",
   },
   {
     id: "6",
-    name: "Sitra Taha",
+    name: "Lily Tadesse",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.48,
-    image: "/images/tr2.jpg",
+    price: 5000,
+    originalPrice: 6000,
+    image: "/images/dress6.jpg",
   },
 ]
 
 const bestsellerMenProducts = [
   {
     id: "1",
-    name: "Kedir Mohammed",
+    name: "Kedija Mohammed",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
+    price: 3700,
+    originalPrice: 5000,
     image: "/images/men3.png",
   },
   {
     id: "2",
     name: "Hana Badege",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
+    price: 4900,
+    originalPrice: 5700,
     image: "/images/men4.jpg",
   },
   {
     id: "3",
-    name: "Sitta Tcha",
+    name: "Selam Kebede",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
-    image: "/images/men3.png",
+    price: 3200,
+    originalPrice: 4100,
+    image: "/images/menn2.jpg",
   },
   {
     id: "4",
     name: "Amina Kedir",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
-    image: "/images/men4.jpg",
+    price: 5090,
+    originalPrice: 6100,
+    image: "/images/men1.jpg",
   },
   {
     id: "5",
-    name: "Hana Badege",
+    name: "Zeritu Mulugeta",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
+    price: 3800,
+    originalPrice: 5900,
     image: "/images/men3.png",
   },
   {
     id: "6",
-    name: "Sitta Tcha",
+    name: "Helina Assefa",
     artisan: "Artisan Weaver",
-    price: 6.48,
-    originalPrice: 16.49,
-    image: "/images/men4.jpg",
+    price: 5200,
+    originalPrice: 6400,
+    image: "/images/menn.jpg",
   },
 ]
 
@@ -117,42 +117,35 @@ export function BestsellerSection() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            {/* Left Side - Tall Big Image with Text Overlay */}
             <div className="lg:col-span-1 flex justify-center">
               <Card className="overflow-hidden border-0 shadow-lg w-full max-w-xs relative">
-                {/* Text overlay at the top of the big image */}
                 <div className="absolute top-4 left-4 z-10 text-black">
-                  <div className="flex flex-col space-y-1">
+                  <div className="flex flex-col space-y-1 mt-2">
                     <span className="font-medium text-sm">For Women</span>
-                    <span className="text-sm">5 items</span>
+                    <span className="text-sm">6 items</span>
                   </div>
                 </div>
 
-                {/* Big tall image - full height display without cropping */}
                 <div className="relative h-[600px] bg-gray-50 flex items-center justify-center">
                   <div className="relative w-full h-full">
                     <Image
                       src={selectedProduct.image || "/placeholder.svg"}
                       alt={selectedProduct.name}
                       fill
-                      className="object-contain"
+                      className="object-cover"
                       priority
                       sizes="(max-width: 768px) 100vw, 400px"
                     />
                   </div>
                 </div>
-                {/* No product info section for big image */}
               </Card>
             </div>
 
-            {/* Right Side - Content Area */}
             <div className="lg:col-span-2 flex flex-col">
-              {/* BESTSELLER DRESSES Title with full width underline */}
               <div className="text-center lg:text-left mb-8">
-                <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">BESTSELLER DRESSES</h1>
-                  {/* Arrows at the end of text with margin left */}
-                  <div className="flex items-center gap-1 ml-4">
+                <div className="flex items-center justify-center lg:justify-start gap-2 mt-2">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">BESTSELLER DRESSES</h2>
+                  <div className="flex items-center gap-1 ml-90">
                     <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
@@ -162,11 +155,9 @@ export function BestsellerSection() {
                   </div>
                 </div>
 
-                {/* Full width black underline */}
-                <div className="w-full h-0.5 bg-black mt-2"></div>
+                <div className="w-full h-0.5 bg-gray-400 mt-2"></div>
               </div>
 
-              {/* Small Products Grid - Full height equal to big image */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow">
                 {bestsellerProducts.map((product) => (
                   <Card
@@ -179,7 +170,6 @@ export function BestsellerSection() {
                       window.location.href = `/products/${product.id}`
                     }}
                   >
-                    {/* Product image - full height display without cropping */}
                     <div className="relative flex-grow bg-gray-100 min-h-[180px] flex items-center justify-center">
                       <div className="relative w-full h-full">
                         <Image
@@ -192,7 +182,6 @@ export function BestsellerSection() {
                       </div>
                     </div>
 
-                    {/* Product info */}
                     <div className="p-3 text-center flex-shrink-0">
                       <h3 className="font-bold text-base text-gray-900 mb-1">{product.name}</h3>
                       <p className="text-xs text-gray-600 mb-2">{product.artisan}</p>
@@ -209,16 +198,14 @@ export function BestsellerSection() {
 
           {/* Mobile Layout */}
           <div className="lg:hidden mt-8">
-            {/* Mobile Header with arrows and full width underline */}
             <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-4 text-sm text-black mb-2">
                 <span className="font-medium">For Women</span>
-                <span>5 items</span>
+                <span>6 items</span>
               </div>
 
               <div className="flex items-center justify-center gap-2 mb-4">
                 <h1 className="text-2xl font-bold text-gray-900 uppercase">BESTSELLER DRESSES</h1>
-                {/* Arrows at the end of text for mobile with margin left */}
                 <div className="flex items-center gap-1 ml-4">
                   <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -229,7 +216,7 @@ export function BestsellerSection() {
                 </div>
               </div>
 
-              <div className="w-full h-0.5 bg-black"></div>
+              <div className="w-full h-0.5 bg-gray-400"></div>
             </div>
 
             {/* Mobile Products Grid */}
@@ -299,13 +286,12 @@ export function BestsellerSection() {
                 <p className="font-semibold text-gray-900 mb-3">Couples Traditional Set</p>
                 <div className="flex justify-center gap-2">
                   <span className="text-gray-400 line-through text-sm">Birr 10,000</span>
-                  <span className="text-teal-600 font-semibold">Birr 5000</span>
+                  <span className="text-teal-600 font-semibold">Birr 8000</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Features Row - Displayed under both images in a single row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-12 mt-8">
             <div className="space-y-2 text-center">
               <div className="text-2xl font-bold text-red-700">1.</div>
@@ -333,7 +319,6 @@ export function BestsellerSection() {
         </div>
       </section>
 
-      {/* Bestseller Men Cloth Section - Reversed Layout */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
@@ -351,8 +336,7 @@ export function BestsellerSection() {
                   </div>
                 </div>
 
-                {/* Full width black underline */}
-                <div className="w-full h-0.5 bg-black mt-2"></div>
+                <div className="w-full h-0.5 bg-gray-400 mt-2"></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow">
@@ -393,13 +377,12 @@ export function BestsellerSection() {
               </div>
             </div>
 
-            {/* Right Side - Tall Big Image with Text Overlay */}
             <div className="lg:col-span-1 flex justify-center order-1 lg:order-2">
               <Card className="overflow-hidden border-0 shadow-lg w-full max-w-xs relative">
                 <div className="absolute top-4 left-4 z-10 text-black">
                   <div className="flex flex-col space-y-1">
-                    <span className="font-medium text-sm">FINNITURE</span>
-                    <span className="text-sm">5 Items</span>
+                    <span className="font-medium text-sm">For Men</span>
+                    <span className="text-sm">6 Items</span>
                   </div>
                 </div>
 
@@ -423,13 +406,13 @@ export function BestsellerSection() {
           <div className="lg:hidden mt-8">
             <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-4 text-sm text-black mb-2">
-                <span className="font-medium">FINNITURE</span>
-                <span>5 Items</span>
+                <span className="font-medium">For Men</span>
+                <span>6 Items</span>
               </div>
 
               <div className="flex items-center justify-center gap-2 mb-4">
                 <h1 className="text-2xl font-bold text-gray-900 uppercase">BESTSELLER MEN CLOTH</h1>
-                <div className="flex items-center gap-1 ml-4">
+                <div className="flex items-center gap-1">
                   <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
@@ -439,8 +422,7 @@ export function BestsellerSection() {
                 </div>
               </div>
 
-              {/* Full width black underline for mobile */}
-              <div className="w-full h-0.5 bg-black"></div>
+              <div className="w-full h-0.5 bg-gray-400"></div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -481,49 +463,62 @@ export function BestsellerSection() {
         </div>
       </section>
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] items-center gap-8">
-            <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">GET YOUR GABI!</h1>
-                <p className="text-gray-600 text-base leading-relaxed">Wrap yourself in comfort and culture.</p>
-                <p className="text-gray-600 text-base leading-relaxed">It&apos;s style with a story.</p>
-              </div>
+     <section className="py-16 bg-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] items-center">
+      <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">GET YOUR GABI!</h1>
+          <p className="text-gray-600 text-base leading-relaxed">Wrap yourself in comfort and culture.</p>
+          <p className="text-gray-600 text-base leading-relaxed">It&apos;s style with a story.</p>
+        </div>
 
-              <div className="bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg w-full max-w-xs p-5 border border-gray-100">
-                <div className="relative h-44 w-full rounded-md overflow-hidden mb-4">
-                  <Image src="/images/gabi2.jpg" alt="Gabi Folded" fill className="object-cover" />
-                </div>
+        {/* Product Card */}
+        <div className="bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg w-full max-w-xs p-5 border border-gray-100 -mb-6 z-10">
+          <div className="relative h-44 w-full rounded-md overflow-hidden mb-4">
+            <Image
+              src="/images/gabi2.jpg"
+              alt="Gabi Folded"
+              fill
+              className="object-cover"
+            />
+          </div>
 
-                <div className="text-center space-y-2">
-                  <p className="text-gray-800 font-semibold text-lg">Saba</p>
+          <div className="text-center space-y-2">
+            <p className="text-gray-800 font-semibold text-lg">Saba</p>
 
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                    <span>15 Sales</span>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-gray-400 line-through text-sm">Birr 10000</span>
-                    <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
-                  </div>
-
-                  <div className="flex justify-center gap-2 mt-2">
-                    <span className="w-3 h-3 rounded-full bg-teal-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-orange-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-gray-500"></span>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+              <span>15 Sales</span>
             </div>
 
-            <div className="relative h-[500px] md:h-[600px] rounded-lg overflow-hidden">
-              <Image src="/images/gabi.jpg" alt="Gabi Traditional Cloth" fill className="object-cover object-center" />
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-gray-400 line-through text-sm">Birr 10000</span>
+              <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
+            </div>
+
+            <div className="flex justify-center gap-2 mt-2">
+              <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+              <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+              <span className="w-3 h-3 rounded-full bg-gray-500"></span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Right Column */}
+      <div className="relative h-[500px] md:h-[600px] rounded-lg overflow-hidden -ml-6">
+        <Image
+          src="/images/gabi.jpg"
+          alt="Gabi Traditional Cloth"
+          fill
+          className="object-cover object-center"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -561,7 +556,7 @@ export function BestsellerSection() {
                 />
               </div>
               {/* Product Details */}
-              <p className="text-gray-900 font-semibold text-lg leading-snug">Hana Badge</p>
+              <p className="text-gray-900 font-semibold text-lg leading-snug">Kalkidan Gebre</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
                 <span className="text-gray-500 line-through">Birr 778</span>
@@ -579,7 +574,7 @@ export function BestsellerSection() {
                 />
               </div>
               {/* Product Details */}
-              <p className="text-gray-900 font-semibold text-lg leading-snug">Sitra Teha</p>
+              <p className="text-gray-900 font-semibold text-lg leading-snug">Sumeya Sadik</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
                 <span className="text-gray-500 line-through">Birr 140</span>
@@ -762,11 +757,10 @@ export function BestsellerSection() {
                 <Image src="/images/girl2.png" alt="Amina Kedir" fill className="object-cover object-top" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Amina Kedir</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Hana Badege</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Amina is a young professional who celebrates her culture through fashion. She loves finding handmade
-                  traditional clothes that blend authenticity with modern style, letting her wear her heritage with
-                  pride.
+                 Hana is a young jewelry fashionista who celebrates her culture through style. She loves discovering unique, handcrafted pieces that blend tradition with modern elegance, allowing her to wear her heritage with pride.
+
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
                   <svg
@@ -836,11 +830,10 @@ export function BestsellerSection() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Amina Kedir</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Lily Tadesse</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Amina is a young professional who celebrates her culture through fashion. She loves finding handmade
-                  traditional clothes that blend authenticity with modern style, letting her wear her heritage with
-                  pride.
+                  Lily is a creator behind Gabi, celebrating her culture through fashion. She handmakes traditional gabis that blend authenticity with modern style, allowing her heritage to shine with pride.
+
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
                   {/* Calendar Icon */}

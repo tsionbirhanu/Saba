@@ -6,7 +6,6 @@ export function Footer() {
     <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-8">
 
-        {/* Top Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <h2 className="text-2xl font-bold">Consulting for Your Business</h2>
           <button className="bg-accent text-accent-foreground px-6 py-2 rounded-md hover:opacity-90 transition font-medium">
@@ -14,7 +13,6 @@ export function Footer() {
           </button>
         </div>
 
-        {/* Links & Contact */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 border-t border-primary-foreground/20 pt-8">
           {[
             { title: "Company", links: ["About", "Careers", "Blog"] },
@@ -44,7 +42,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="border-t border-primary-foreground/20 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm">© {new Date().getFullYear()} Saba. All rights reserved.</p>
           <div className="flex gap-4">

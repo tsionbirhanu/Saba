@@ -56,7 +56,6 @@ export function Hero() {
 
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Slides */}
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -74,7 +73,6 @@ export function Hero() {
         </div>
       ))}
 
-      {/* Text Content */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 mt-20 md:mt-28">
         <h1
           className={`text-4xl md:text-6xl font-bold leading-tight mb-4 animate-fade-in ${slides[currentSlide].textColor}`}
@@ -94,7 +92,7 @@ export function Hero() {
         </Button>
       </div>
 
-      {/* Navigation Arrows */}
+
       <button
         onClick={prevSlide}
         className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 z-20 text-white/80 hover:text-white hover:scale-110 transition-transform"
@@ -108,7 +106,6 @@ export function Hero() {
         <ChevronRight className="w-10 h-10" />
       </button>
 
-      {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {slides.map((_, index) => (
           <button
