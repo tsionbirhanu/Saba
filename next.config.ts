@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    unoptimized: true, // disables optimization so query strings work
+  },
 };
 
 export default nextConfig;

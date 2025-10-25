@@ -164,7 +164,7 @@ export function Header() {
               <Link href="/blog" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                 Blog
               </Link>
-              <Link href="/contact" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+               <Link href="/#contact" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                 Contact
               </Link>
             </nav>
