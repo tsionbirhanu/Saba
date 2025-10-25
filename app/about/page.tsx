@@ -53,7 +53,7 @@ export default function AboutPage() {
               </div>
               <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden">
                 <Image
-                  src="/placeholder.jpg?height=400&width=400&query=women-artisans-working"
+                  src="/images/tMr7ouLI.jpg"
                   alt="Women artisans"
                   fill
                   className="object-cover"
@@ -131,17 +131,17 @@ export default function AboutPage() {
                 {
                   name: "Abeba Tekle",
                   role: "Founder & CEO",
-                  image: "/placeholder.jpg?height=300&width=300&query=woman-professional-1",
+                  image: "/images/girl1.png",
                 },
                 {
                   name: "Marta Assefa",
                   role: "Head of Artisan Relations",
-                  image: "/placeholder.jpg?height=300&width=300&query=woman-professional-2",
+                  image: "/images/girl2.png",
                 },
                 {
-                  name: "Yohannes Kebede",
+                  name: "Melat Kebede",
                   role: "Operations Director",
-                  image: "/placeholder.jpg?height=300&width=300&query=man-professional",
+                  image: "/images/girl1.png ",
                 },
               ].map((member, index) => (
                 <div key={index} className="text-center">
