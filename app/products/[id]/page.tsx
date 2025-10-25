@@ -7,64 +7,49 @@ import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Heart, Share2, Star, ShoppingCart } from "lucide-react"
-
-const productData = {
-  id: "1",
-  name: "Couples Clothing",
-  price: 6.48,
-  originalPrice: 16.48,
-  rating: 4.5,
-  reviews: 128,
-  description: "We celebrate togetherness in style. Matching tradition, woven with love. A perfect pair, made to last.",
-  colors: ["#4A90E2", "#50C878", "#FFB6C1", "#000000"],
-  images: ["/images/dress.jpg", "/images/dress2.jpg", "/images/dress3.jpg"],
-  seller: "Saba Artisans",
-  inStock: true,
-  features: ["Authentic handmade design", "Premium quality fabric", "Sustainable production", "One-of-a-kind piece"],
-  reviews_list: [
-    {
-      author: "Sarah Doe",
-      rating: 5,
-      text: "Beautiful quality and authentic design. Highly recommend!",
-      date: "2 weeks ago",
-    },
-    {
-      author: "John Smith",
-      rating: 4,
-      text: "Great product, delivery was fast.",
-      date: "1 month ago",
-    },
-    {
-      author: "Emma Wilson",
-      rating: 5,
-      text: "Exceeded my expectations. Perfect gift!",
-      date: "1 month ago",
-    },
-  ],
-}
+import { getProductById } from "@/lib/products-data"
 
 const relatedProducts = [
   {
-    id: "2",
-    name: "Traditional Attire",
-    price: 6.48,
+    id: "w2",
+    name: "Hana Badege",
+    price: 5000,
     image: "/images/dress.jpg",
   },
-  { id: "3", name: "Gabi Wrap", price: 8.99, image: "/images/gabi2.jpg" },
-  { id: "4", name: "Jewelry Set", price: 12.99, image: "/images/rings2.jpg" },
+  { id: "g1", name: "Traditional Gabi", price: 5000, image: "/images/gabi.jpg" },
+  { id: "j1", name: "Silver Jewelry", price: 425, image: "/images/rings2.jpg" },
   {
-    id: "5",
+    id: "m1",
     name: "Men's Traditional",
-    price: 9.99,
-    image: "/images/men4.jpg",
+    price: 3700,
+    image: "/images/men.jpg",
   },
 ]
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  use(params)
+  const { id } = use(params)
+  const product = getProductById(id)
+
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [selectedColor, setSelectedColor] = useState(productData.colors[0])
+  const [selectedColor, setSelectedColor] = useState("#4A90E2")
+
+  if (!product) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
+            <Link href="/shop/women-clothes">
+              <Button className="bg-primary hover:bg-primary/90 text-white">Back to Shop</Button>
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
@@ -76,11 +61,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             Home
           </Link>
           <span className="mx-2">/</span>
-          <Link href="/shop/all-products" className="hover:text-primary">
-            Shop
+          <Link href={`/shop/${product.category}`} className="hover:text-primary">
+            {product.category.replace("-", " ").toUpperCase()}
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-900">{productData.name}</span>
+          <span className="text-gray-900">{product.name}</span>
         </div>
 
         {/* Product Section */}
@@ -89,15 +74,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Images */}
             <div>
               <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden h-96 flex items-center justify-center relative">
-                <Image
-                  src={productData.images[selectedImage] || "/images/dress.jpg"}
-                  alt={productData.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={product.image || "/placeholder.jpg"} alt={product.name} fill className="object-cover" />
               </div>
               <div className="flex gap-2 overflow-x-auto">
-                {productData.images.map((img, idx) => (
+                {[product.image, product.image, product.image].map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
@@ -106,7 +86,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     }`}
                   >
                     <Image
-                      src={img || "/images/dress.jpg"}
+                      src={img || "/placeholder.jpg"}
                       alt={`View ${idx + 1}`}
                       width={80}
                       height={80}
@@ -119,7 +99,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Details */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{productData.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
 
               {/* Rating */}
               <div className="flex items-center gap-2 mb-4">
@@ -127,33 +107,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < Math.floor(productData.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                      className={`w-4 h-4 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600">({productData.reviews} reviews)</span>
+                <span className="text-sm text-gray-600">({product.reviews} reviews)</span>
               </div>
 
               {/* Price */}
               <div className="mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-primary">Birr{productData.price}</span>
-                  <span className="text-lg text-gray-400 line-through">Birr{productData.originalPrice}</span>
+                  <span className="text-3xl font-bold text-primary">Birr{product.price}</span>
+                  <span className="text-lg text-gray-400 line-through">Birr{product.originalPrice}</span>
                   <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
-                    {Math.round(((productData.originalPrice - productData.price) / productData.originalPrice) * 100)}%
-                    OFF
+                    {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
                   </span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-gray-600 mb-6">{productData.description}</p>
+              <p className="text-gray-600 mb-6">{product.description}</p>
 
               {/* Colors */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-900 mb-3">Color</label>
                 <div className="flex gap-3">
-                  {productData.colors.map((color) => (
+                  {["#4A90E2", "#50C878", "#FFB6C1", "#000000"].map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
@@ -203,16 +182,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {/* Seller Info */}
               <div className="bg-gray-50 p-4 rounded-lg mb-6">
                 <p className="text-sm text-gray-600">
-                  Sold by <span className="font-medium text-gray-900">{productData.seller}</span>
+                  Sold by <span className="font-medium text-gray-900">{product.artisan}</span>
                 </p>
                 <p className="text-sm text-gray-600 mt-1">✓ Verified Seller • Free Shipping</p>
+                <Link href="/messages">
+                  <Button className="mt-3 w-full bg-primary hover:bg-primary/90 text-white">Contact Seller</Button>
+                </Link>
               </div>
 
               {/* Features */}
               <div className="border-t pt-6">
                 <h3 className="font-medium text-gray-900 mb-3">Why Choose This Product</h3>
                 <ul className="space-y-2">
-                  {productData.features.map((feature, idx) => (
+                  {[
+                    "Authentic handmade design",
+                    "Premium quality fabric",
+                    "Sustainable production",
+                    "One-of-a-kind piece",
+                  ].map((feature, idx) => (
                     <li key={idx} className="flex items-center gap-2 text-sm text-gray-600">
                       <span className="w-2 h-2 bg-primary rounded-full"></span>
                       {feature}
@@ -227,7 +214,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <div className="border-t pt-8 mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
             <div className="space-y-4">
-              {productData.reviews_list.map((review, idx) => (
+              {[
+                {
+                  author: "Sarah Demse",
+                  rating: 5,
+                  text: "Beautiful quality and authentic design. Highly recommend!",
+                  date: "2 weeks ago",
+                },
+                { author: "Yohannes Alemu", rating: 4, text: "Great product, delivery was fast.", date: "1 month ago" },
+                {
+                  author: "Bethelhem Kassa",
+                  rating: 5,
+                  text: "Exceeded my expectations. Perfect gift!",
+                  date: "1 month ago",
+                },
+              ].map((review, idx) => (
                 <div key={idx} className="border-b pb-4 last:border-b-0">
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -253,19 +254,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <div className="border-t pt-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`}>
+              {relatedProducts.map((relProduct) => (
+                <Link key={relProduct.id} href={`/products/${relProduct.id}`}>
                   <div className="group cursor-pointer">
                     <div className="bg-gray-100 rounded-lg overflow-hidden mb-3 h-48 relative">
                       <Image
-                        src={product.image || "/images/dress.svg"}
-                        alt={product.name}
+                        src={relProduct.image || "/placeholder.jpg"}
+                        alt={relProduct.name}
                         fill
                         className="object-cover group-hover:scale-105 transition"
                       />
                     </div>
-                    <h3 className="font-medium text-gray-900 group-hover:text-primary transition">{product.name}</h3>
-                    <p className="text-primary font-bold">Birr{product.price}</p>
+                    <h3 className="font-medium text-gray-900 group-hover:text-primary transition">{relProduct.name}</h3>
+                    <p className="text-primary font-bold">Birr{relProduct.price}</p>
                   </div>
                 </Link>
               ))}

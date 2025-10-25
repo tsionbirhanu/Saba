@@ -1,10 +1,8 @@
-
 "use client"
 
 import { useState } from "react"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
-
 
 const bestsellerProducts = [
   {
@@ -43,7 +41,7 @@ const bestsellerProducts = [
     id: "5",
     name: "Beza Alemayehu",
     artisan: "Artisan Weaver",
-    price:4000,
+    price: 4000,
     originalPrice: 5700,
     image: "/images/dress5.jpg",
   },
@@ -166,8 +164,7 @@ export function BestsellerSection() {
                       selectedProduct.id === product.id ? "shadow-lg bg-gray-50" : "shadow-md hover:shadow-lg"
                     }`}
                     onClick={() => {
-                      setSelectedProduct(product)
-                      window.location.href = `/products/${product.id}`
+                      window.location.href = `/products/w${product.id}`
                     }}
                   >
                     <div className="relative flex-grow bg-gray-100 min-h-[180px] flex items-center justify-center">
@@ -228,8 +225,7 @@ export function BestsellerSection() {
                     selectedProduct.id === product.id ? "shadow-md bg-gray-50" : "shadow-sm"
                   }`}
                   onClick={() => {
-                    setSelectedProduct(product)
-                    window.location.href = `/products/${product.id}`
+                    window.location.href = `/products/w${product.id}`
                   }}
                 >
                   <div className="relative h-32 bg-gray-100 flex items-center justify-center">
@@ -267,7 +263,6 @@ export function BestsellerSection() {
                 <Image src="/images/couple.jpg" alt="Couples Clothing" fill className="object-cover" />
               </div>
             </div>
-
 
             <div className="space-y-6">
               <div>
@@ -347,8 +342,7 @@ export function BestsellerSection() {
                       selectedMenProduct.id === product.id ? "shadow-lg bg-gray-50" : "shadow-md hover:shadow-lg"
                     }`}
                     onClick={() => {
-                      setSelectedMenProduct(product)
-                      window.location.href = `/products/${product.id}`
+                      window.location.href = `/products/m${product.id}`
                     }}
                   >
                     <div className="relative flex-grow bg-gray-100 min-h-[180px] flex items-center justify-center">
@@ -433,8 +427,7 @@ export function BestsellerSection() {
                     selectedMenProduct.id === product.id ? "shadow-md bg-gray-50" : "shadow-sm"
                   }`}
                   onClick={() => {
-                    setSelectedMenProduct(product)
-                    window.location.href = `/products/${product.id}`
+                    window.location.href = `/products/m${product.id}`
                   }}
                 >
                   <div className="relative h-32 bg-gray-100 flex items-center justify-center">
@@ -463,69 +456,57 @@ export function BestsellerSection() {
         </div>
       </section>
 
-     <section className="py-16 bg-white">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] items-center">
-      <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">GET YOUR GABI!</h1>
-          <p className="text-gray-600 text-base leading-relaxed">Wrap yourself in comfort and culture.</p>
-          <p className="text-gray-600 text-base leading-relaxed">It&apos;s style with a story.</p>
-        </div>
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] items-center">
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">GET YOUR GABI!</h1>
+                <p className="text-gray-600 text-base leading-relaxed">Wrap yourself in comfort and culture.</p>
+                <p className="text-gray-600 text-base leading-relaxed">It&apos;s style with a story.</p>
+              </div>
 
-        {/* Product Card */}
-        <div className="bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg w-full max-w-xs p-5 border border-gray-100 -mb-6 z-10">
-          <div className="relative h-44 w-full rounded-md overflow-hidden mb-4">
-            <Image
-              src="/images/gabi2.jpg"
-              alt="Gabi Folded"
-              fill
-              className="object-cover"
-            />
+              {/* Product Card */}
+              <div className="bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-lg w-full max-w-xs p-5 border border-gray-100 -mb-6 z-10">
+                <div className="relative h-44 w-full rounded-md overflow-hidden mb-4">
+                  <Image src="/images/gabi2.jpg" alt="Gabi Folded" fill className="object-cover" />
+                </div>
+
+                <div className="text-center space-y-2">
+                  <p className="text-gray-800 font-semibold text-lg">Saba</p>
+
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                    <span>15 Sales</span>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-gray-400 line-through text-sm">Birr 10000</span>
+                    <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
+                  </div>
+
+                  <div className="flex justify-center gap-2 mt-2">
+                    <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+                    <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+                    <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                    <span className="w-3 h-3 rounded-full bg-gray-500"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="relative h-[500px] md:h-[600px] rounded-lg overflow-hidden -ml-6">
+              <Image src="/images/gabi.jpg" alt="Gabi Traditional Cloth" fill className="object-cover object-center" />
+            </div>
           </div>
-
-          <div className="text-center space-y-2">
-            <p className="text-gray-800 font-semibold text-lg">Saba</p>
-
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-              <span>15 Sales</span>
-            </div>
-
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-gray-400 line-through text-sm">Birr 10000</span>
-              <span className="text-teal-600 font-bold text-lg">Birr 5000</span>
-            </div>
-
-            <div className="flex justify-center gap-2 mt-2">
-              <span className="w-3 h-3 rounded-full bg-teal-500"></span>
-              <span className="w-3 h-3 rounded-full bg-orange-500"></span>
-              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-              <span className="w-3 h-3 rounded-full bg-gray-500"></span>
-            </div>
-          </div>
         </div>
-      </div>
-
-      {/* Right Column */}
-      <div className="relative h-[500px] md:h-[600px] rounded-lg overflow-hidden -ml-6">
-        <Image
-          src="/images/gabi.jpg"
-          alt="Gabi Traditional Cloth"
-          fill
-          className="object-cover object-center"
-        />
-      </div>
-    </div>
-  </div>
-</section>
-
+      </section>
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-wider mb-8">
             JEWELRY PRODUCTS
           </h2>
-
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
             <div className="flex flex-col items-start">
@@ -583,7 +564,6 @@ export function BestsellerSection() {
             </div>
 
             <div className="flex flex-col items-start">
-
               <div className="relative w-full aspect-[4/5] overflow-hidden mb-3">
                 <Image
                   src="/images/rings4.jpg"
@@ -592,7 +572,7 @@ export function BestsellerSection() {
                   className="object-cover"
                 />
               </div>
-    
+
               <p className="text-gray-900 font-semibold text-lg leading-snug">Hermella Kassahun</p>
               <p className="text-gray-600 text-sm mb-1">Artisan Weaver</p>
               <div className="flex items-center gap-1 text-sm">
@@ -676,7 +656,6 @@ export function BestsellerSection() {
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
- 
           <div className="text-center mb-12">
             <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-2">Practice Advice</p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">Meet the Weavers!</h2>
@@ -759,8 +738,9 @@ export function BestsellerSection() {
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Hana Badege</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                 Hana is a young jewelry fashionista who celebrates her culture through style. She loves discovering unique, handcrafted pieces that blend tradition with modern elegance, allowing her to wear her heritage with pride.
-
+                  Hana is a young jewelry fashionista who celebrates her culture through style. She loves discovering
+                  unique, handcrafted pieces that blend tradition with modern elegance, allowing her to wear her
+                  heritage with pride.
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
                   <svg
@@ -819,21 +799,15 @@ export function BestsellerSection() {
               </div>
             </div>
 
- 
             <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
               <div className="relative w-full h-64">
-                <Image
-                  src="/images/girl3.jpg" 
-                  alt="Amina Kedir"
-                  fill
-                  className="object-cover object-top"
-                />
+                <Image src="/images/girl3.jpg" alt="Amina Kedir" fill className="object-cover object-top" />
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Lily Tadesse</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Lily is a creator behind Gabi, celebrating her culture through fashion. She handmakes traditional gabis that blend authenticity with modern style, allowing her heritage to shine with pride.
-
+                  Lily is a creator behind Gabi, celebrating her culture through fashion. She handmakes traditional
+                  gabis that blend authenticity with modern style, allowing her heritage to shine with pride.
                 </p>
                 <div className="flex items-center text-gray-500 text-xs mb-4">
                   {/* Calendar Icon */}

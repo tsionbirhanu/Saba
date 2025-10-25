@@ -39,14 +39,14 @@ const sellerProducts = [
     name: "Couples Clothing",
     price: 18.99,
     sales: 32,
-    image: "/images/dress.jpg",
+    image: "/images/couple.jpg",
   },
   {
     id: "3",
     name: "Gabi Wrap",
     price: 22.99,
     sales: 28,
-    image: "/images/dress.jpg",
+    image: "/images/gabi.jpg",
   },
 ]
 
@@ -58,7 +58,6 @@ export default function SellerDashboard() {
       <Header />
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-          {/* --- Dashboard Header --- */}
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-900">Seller Dashboard</h1>
             <Link href="/">
@@ -73,7 +72,7 @@ export default function SellerDashboard() {
           <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
             <div className="relative w-36 h-36 rounded-full overflow-hidden bg-gray-200">
               <Image
-                src="/images/dress.jpg" // replace with seller profile image
+                src="/images/girl1.png" // replace with seller profile image
                 alt="Seller Profile"
                 fill
                 className="object-cover"
@@ -132,7 +131,6 @@ export default function SellerDashboard() {
             </div>
           )}
 
-          {/* --- Products Tab --- */}
           {activeTab === "products" && (
             <>
               <div className="flex items-center justify-between mb-6">
@@ -193,7 +191,6 @@ export default function SellerDashboard() {
             </>
           )}
 
-          {/* --- Analytics Tab --- */}
           {activeTab === "analytics" && (
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Sales Analytics</h2>

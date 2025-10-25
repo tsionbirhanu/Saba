@@ -6,84 +6,28 @@ import Image from "next/image"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Heart, ChevronDown, Grid, List } from "lucide-react"
+import { getProductsByCategory } from "@/lib/products-data"
 
 const categoryData = {
   "women-clothes": {
     name: "Women Clothes",
-    description: "Discover our collection of traditional and modern women's clothing",
+    description:
+      "Discover our exquisite collection of traditional and modern women's clothing, handcrafted by skilled artisans",
   },
   "men-clothes": {
     name: "Men Clothes",
-    description: "Explore authentic men's traditional and contemporary wear",
+    description:
+      "Explore authentic men's traditional and contemporary wear, featuring premium quality fabrics and timeless designs",
   },
   gabi: {
     name: "Gabi",
-    description: "Traditional wraps and shawls for every occasion",
+    description: "Traditional wraps and shawls for every occasion, perfect for adding elegance to any outfit",
   },
   jewelry: {
     name: "Jewelry",
-    description: "Handcrafted jewelry pieces from local artisans",
+    description: "Handcrafted jewelry pieces from local artisans, each piece tells a unique story of craftsmanship",
   },
 }
-
-const products = [
-  {
-    id: "1",
-    name: "Traditional Dress",
-    price: 6.48,
-    originalPrice: 16.48,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "2",
-    name: "Elegant Gown",
-    price: 8.99,
-    originalPrice: 18.99,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "3",
-    name: "Casual Wear",
-    price: 5.99,
-    originalPrice: 15.99,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "4",
-    name: "Formal Attire",
-    price: 12.99,
-    originalPrice: 22.99,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "5",
-    name: "Summer Collection",
-    price: 7.49,
-    originalPrice: 17.49,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "6",
-    name: "Winter Wear",
-    price: 10.99,
-    originalPrice: 20.99,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "7",
-    name: "Party Dress",
-    price: 14.99,
-    originalPrice: 24.99,
-    image: "/images/dress.jpg",
-  },
-  {
-    id: "8",
-    name: "Casual Outfit",
-    price: 9.99,
-    originalPrice: 19.99,
-    image: "/images/dress.jpg",
-  },
-]
 
 export default function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category: categoryKey } = use(params)
@@ -91,7 +35,9 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const [sortBy, setSortBy] = useState("newest")
   const [currentPage, setCurrentPage] = useState(1)
 
+  const products = getProductsByCategory(categoryKey)
   const category = categoryData[categoryKey as keyof typeof categoryData] || categoryData["women-clothes"]
+
   const itemsPerPage = 12
   const totalPages = Math.ceil(products.length / itemsPerPage)
   const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -100,7 +46,6 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
     <>
       <Header />
       <main className="min-h-screen bg-gray-50">
-        {/* Category Header */}
         <div className="bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-gray-900">{category.name}</h1>
@@ -199,7 +144,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                     <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition group">
                       <div className="relative h-48 bg-gray-100 overflow-hidden">
                         <Image
-                          src={product.image || "/placeholder.svg"}
+                          src={product.image || "/placeholder.jpg"}
                           alt={product.name}
                           fill
                           className="object-cover group-hover:scale-105 transition"
@@ -212,9 +157,10 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         <h3 className="font-medium text-gray-900 group-hover:text-primary transition">
                           {product.name}
                         </h3>
+                        <p className="text-sm text-gray-500 mt-1">{product.artisan}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-primary font-bold">Birr{product.price}</span>
-                          <span className="text-gray-400 line-through text-sm">Birr{product.originalPrice}</span>
+                          <span className="text-primary font-bold">Birr {product.price}</span>
+                          <span className="text-gray-400 line-through text-sm">Birr {product.originalPrice}</span>
                         </div>
                       </div>
                     </div>

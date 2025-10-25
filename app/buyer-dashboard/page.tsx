@@ -6,18 +6,18 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { Heart, Package, MapPin, LogOut, Download } from "lucide-react"
+import { Heart, Package, MapPin, LogOut, Download, MessageSquare } from "lucide-react"
 
 const buyerOrders = [
-  { id: "ORD001", date: "2024-01-15", total: "$45.99", status: "Delivered", items: 2 },
-  { id: "ORD002", date: "2024-01-10", total: "$78.50", status: "Shipped", items: 3 },
-  { id: "ORD003", date: "2024-01-05", total: "$32.00", status: "Processing", items: 1 },
+  { id: "ORD001", date: "2024-01-15", total: "Birr 5000", status: "Delivered", items: 2 },
+  { id: "ORD002", date: "2024-01-10", total: "Birr 9000", status: "Shipped", items: 3 },
+  { id: "ORD003", date: "2024-01-05", total: "Birr 3000", status: "Processing", items: 1 },
 ]
 
 const wishlistItems = [
-  { id: "1", name: "Traditional Dress", price: 16.48, image: "/images/dress.jpg" },
-  { id: "2", name: "Gabi Wrap", price: 22.99, image: "/images/gabi-wrap.jpg" },
-  { id: "3", name: "Jewelry Set", price: 24.99, image: "/images/jewelry-set.jpg" },
+  { id: "1", name: "Traditional Dress", price: 8000, image: "/images/dress2.jpg" },
+  { id: "2", name: "Gabi Wrap", price: 2800, image: "/images/gabi.jpg" },
+  { id: "3", name: "Jewelry Set", price: 24.99, image: "/images/rings2.jpg" },
 ]
 
 export default function BuyerDashboard() {
@@ -32,17 +32,24 @@ export default function BuyerDashboard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-              <p className="text-gray-600 mt-1">Welcome back, Sarah Doe</p>
+              <p className="text-gray-600 mt-1">Welcome back, Sarah Demse</p>
             </div>
-            <Link href="/">
-              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                <LogOut className="w-4 h-4" />
-                Logout
-              </Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link href="/messages">
+                <Button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white">
+                  <MessageSquare className="w-4 h-4" />
+                  Messages
+                </Button>
+              </Link>
+              <Link href="/">
+                <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          {/* Navigation Tabs */}
           <div className="flex gap-4 mb-8 border-b">
             {["orders", "wishlist", "profile", "addresses"].map((tab) => (
               <button
@@ -102,20 +109,19 @@ export default function BuyerDashboard() {
             </div>
           )}
 
-          {/* Wishlist Tab */}
           {activeTab === "wishlist" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {wishlistItems.map((item) => (
                 <div key={item.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition">
                   <div className="relative h-40 bg-gray-100">
-                    <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                    <Image src={item.image || "/placeholder.jpg"} alt={item.name} fill className="object-cover" />
                     <button className="absolute top-3 right-3 p-2 bg-white rounded-full hover:bg-gray-100">
                       <Heart className="w-5 h-5 text-red-600 fill-red-600" />
                     </button>
                   </div>
                   <div className="p-4">
                     <h3 className="font-medium text-gray-900 mb-2">{item.name}</h3>
-                    <p className="text-primary font-bold mb-4">${item.price}</p>
+                    <p className="text-primary font-bold mb-4">Birr{item.price}</p>
                     <Button className="w-full bg-primary hover:bg-primary/90 text-white">Add to Cart</Button>
                   </div>
                 </div>
@@ -123,14 +129,14 @@ export default function BuyerDashboard() {
             </div>
           )}
 
-          {/* Profile Tab */}
+
           {activeTab === "profile" && (
             <div className="bg-white rounded-lg p-6 shadow-sm max-w-2xl">
               <h2 className="text-lg font-bold text-gray-900 mb-6">Profile Information</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" defaultValue="Sarah Doe" className="w-full px-4 py-2 border rounded-lg" />
+                  <input type="text" defaultValue="Sarah Demse" className="w-full px-4 py-2 border rounded-lg" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -138,14 +144,13 @@ export default function BuyerDashboard() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                  <input type="tel" defaultValue="+1 (555) 123-4567" className="w-full px-4 py-2 border rounded-lg" />
+                  <input type="tel" defaultValue="+251 911121314" className="w-full px-4 py-2 border rounded-lg" />
                 </div>
                 <Button className="bg-primary hover:bg-primary/90 text-white">Save Changes</Button>
               </div>
             </div>
           )}
 
-          {/* Addresses Tab */}
           {activeTab === "addresses" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-6">
@@ -158,8 +163,8 @@ export default function BuyerDashboard() {
                     <MapPin className="w-5 h-5 text-primary mt-1" />
                     <div>
                       <h3 className="font-medium text-gray-900">Home</h3>
-                      <p className="text-sm text-gray-600 mt-1">123 Main Street, Apt 4B</p>
-                      <p className="text-sm text-gray-600">New York, NY 10001</p>
+                      <p className="text-sm text-gray-600 mt-1">Addis Ababa</p>
+                      <p className="text-sm text-gray-600">ALX Ethiopia</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
