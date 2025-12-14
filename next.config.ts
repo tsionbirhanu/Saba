@@ -1,8 +1,22 @@
 import type { NextConfig } from "next";
+import type webpack from 'webpack'; 
 
 const nextConfig: NextConfig = {
-  images: {
-    unoptimized: true, // disables optimization so query strings work
+ 
+
+  webpack: (config: webpack.Configuration, { isServer, defaultLoaders }) => {
+    
+    if (isServer) {
+        
+        config.target = 'node'; 
+        
+        config.externals = [
+            ...(config.externals || []),
+            "@emurgo/cardano-serialization-lib-nodejs" 
+        ];
+    }
+    
+    return config;
   },
 };
 
