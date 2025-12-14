@@ -11,18 +11,21 @@
     "prisma:migrate": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dTFza4q9tuXf@ep-purple-feather-ag4y3z7b-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" prisma migrate dev --name init --schema ./prisma/schema.prisma"
   },
   "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^15.0.3",
     "@radix-ui/react-slot": "^1.2.3",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
+    "bs58": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.546.0",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@prisma/client": "^6.18.0",

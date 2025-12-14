@@ -20,24 +20,44 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum AuthMethod {
+  PASSWORD
+  CARDANO
+}
+
+enum WalletProvider {
+  NAMI
+  ETERNL
+  LACE
+  FLINT
+  OTHER
+}
+
+
 model User {
-  id              String            @id @default(uuid())
+  id              String   @id @default(uuid())
   name            String
-  email           String            @unique
+  email           String   @unique
   password        String
   phoneNumber     String?
-  role            Role              @default(BUYER)
-  profileImage    String?           // Cloudinary profile image
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  role            Role     @default(BUYER)
 
-  designerProfile DesignerProfile?  // Optional: only for designers
-  orders          Order[]           // Orders placed by this user
-  messagesSent    Message[]         @relation("SentMessages")
-  messagesReceived Message[]        @relation("ReceivedMessages")
-  favorites       Favorite[]        // Wishlist items
+  profileImage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
+  // Cardano auth (SELLERS)
+  cardanoAddress  String?  @unique
+  walletNonce     String?
+  walletVerified  Boolean  @default(false)
+
+  designerProfile DesignerProfile?
+  orders          Order[]
+  messagesSent    Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+  favorites       Favorite[]
 }
+
 
 model DesignerProfile {
   id              String   @id @default(uuid())
