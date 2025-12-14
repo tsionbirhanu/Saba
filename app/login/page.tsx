@@ -15,9 +15,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
 
 
-  const handleLogin = () => {
-    router.push("/") 
+  const handleLogin = async () => {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
+
+  const data = await res.json()
+  if (!res.ok) return alert(data.error)
+
+  localStorage.setItem("token", data.token)
+  localStorage.setItem("email", email)
+
+  if (data.user.role === "DESIGNER") {
+    router.push("/connect-wallet")
+  } else {
+    router.push("/")
   }
+}
+
 
   return (
     <div className="min-h-screen relative overflow-hidden">

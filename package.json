@@ -11,6 +11,7 @@
     "prisma:migrate": "cross-env DATABASE_URL=\"postgresql://neondb_owner:npg_dTFza4q9tuXf@ep-purple-feather-ag4y3z7b-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" prisma migrate dev --name init --schema ./prisma/schema.prisma"
   },
   "dependencies": {
+    "@emurgo/cardano-serialization-lib-browser": "^15.0.3",
     "@emurgo/cardano-serialization-lib-nodejs": "^15.0.3",
     "@radix-ui/react-slot": "^1.2.3",
     "@vercel/analytics": "^1.5.0",
