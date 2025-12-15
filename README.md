@@ -1,126 +1,183 @@
 # 🧵✨ Saba – Discover, Celebrate & Wear Tradition
 
-Welcome to **Saba**, a modern web application built with **Next.js** that bridges the gap between tradition and technology.  
-Our mission is simple — to **empower local artisans** and **connect buyers** to authentic, handmade traditional clothing 🩵.
+Welcome to **Saba**, a modern web application built with **Next.js** that bridges the gap between tradition and technology.
+Our mission is simple — to **empower local artisans** and **connect buyers** to authentic, handmade traditional clothing.
 
 ---
 
 ## 🌍 What is Saba?
 
-**Saba** is more than an e-commerce platform — it’s a **digital marketplace** for culture, craftsmanship, and creativity.  
-Whether you’re looking for a *beautifully woven dress*, *handmade accessories*, or *traditional couples’ clothing*, Saba is here to bring it all together.
+**Saba** is more than an e-commerce platform — it’s a **digital marketplace** for culture, craftsmanship, and creativity.
+Whether you’re looking for a beautifully woven dress, handmade accessories, or traditional couples’ clothing, Saba brings it all together.
 
-🪡 **For Artisans:** A platform to showcase and sell your handmade products.  
-👗 **For Buyers:** A space to explore authentic, handcrafted traditional fashion.  
-💬 **For Everyone:** A community celebrating culture and connection.
+* 🪡 **For Artisans (Designers):** Showcase, verify, and sell handmade products
+* 👗 **For Buyers:** Discover and purchase authentic traditional fashion
+* 💬 **For Everyone:** A community celebrating culture and connection
 
 ---
 
-## ⚙️ Getting Started (Development Setup)
+## 🧩 Core Concepts
 
-To get Saba running locally, follow these simple steps 👇
+Saba introduces **verified designer accounts** and **secure authentication** to protect both artisans and buyers.
+
+* Designers register with email and password
+* Designers verify ownership using a **Cardano wallet** (Nami, Lace, Eternl)
+* Buyers shop using traditional authentication
+* Payments and future on-chain features are handled separately
+
+---
+
+## 🔐 Cardano Wallet Authentication (Designers)
+
+Saba integrates **Cardano wallet–based authentication** to securely verify designer identities.
+
+### Why Cardano?
+
+* Cryptographically secure identity verification
+* No passwords required after wallet linking
+* No blockchain fees for authentication
+* Wallet ownership proves designer identity
+
+### How It Works (High-Level)
+
+1. Designer registers using email and password
+2. Designer connects a Cardano wallet (Nami / Lace / Eternl)
+3. Backend generates a secure nonce
+4. Wallet signs the nonce
+5. Backend verifies the signature (off-chain)
+6. Wallet is linked to the designer account
+
+> ⚠️ Authentication is **off-chain** — no Cardano validators or transactions are used for login.
+
+### Supported Wallets
+
+* Nami
+* Lace
+* Eternl
+* Flint
+
+---
+
+## 🛍️ Core Features
+
+### ✨ Product Discovery
+
+* Browse curated traditional clothing
+* Category-based filtering
+* Rich visual presentation
+
+### 🧺 Smart Shopping Experience
+
+* Cart management
+* Favorites
+* Order tracking
+
+### 🔒 Secure & Trusted
+
+* Verified designer profiles
+* Wallet-authenticated sellers
+* Role-based access control (BUYER / DESIGNER / ADMIN)
+
+### 📱 Fully Responsive
+
+* Optimized for mobile, tablet, and desktop
+
+---
+
+## ⚙️ Getting Started (Development)
 
 ### 1️⃣ Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/saba.git
 cd saba
-Install dependencies
+```
+
+### 2️⃣ Install dependencies
+
+```bash
 npm install
 # or
 yarn install
 # or
 pnpm install
-Run the development server
+```
+
+### 3️⃣ Run the development server
+
+```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
-hen open 👉 http://localhost:3000
+```
 
-Project Structure
+Open 👉 [http://localhost:3000](http://localhost:3000)
 
+---
+
+## 📁 Project Structure
+
+```text
 📦 saba/
- ┣ 📂 app/                # Main Next.js app directory
- ┣ 📂 components/         # Reusable UI components (Navbar, Footer, Cards, etc.)
- ┣ 📂 public/              # Static assets (images, icons, etc.)
- ┣ 📂 styles/              # Global styles and Tailwind configurations
- ┣ 📜 package.json         # Dependencies and scripts
- ┣ 📜 next.config.js       # Next.js configuration
- ┗ 📜 README.md            # You’re here!
-🎨 Design & Aesthetic
+ ┣ 📂 app/                # Next.js App Router & API routes
+ ┣ 📂 components/         # Reusable UI components
+ ┣ 📂 lib/                # Prisma, auth, utilities
+ ┣ 📂 public/             # Static assets
+ ┣ 📂 styles/             # Tailwind & global styles
+ ┣ 📜 prisma/schema.prisma # Database schema
+ ┣ 📜 package.json        # Dependencies & scripts
+ ┗ 📜 README.md           # Project documentation
+```
+
+---
+
+## 🎨 Design Philosophy
 
 Saba’s design embraces simplicity and cultural elegance.
-Every UI element is handcrafted to reflect the values of:
 
-🧵 Authenticity: Inspired by local weaving and craftsmanship
+* 🧵 **Authenticity:** Inspired by local craftsmanship
+* 🌈 **Vibrance:** Gentle palettes influenced by traditional patterns
+* 💫 **Modern Simplicity:** Clean layouts, smooth animations, readable typography
 
-🌈 Vibrance: Gentle color palette inspired by traditional patterns
+Tailwind CSS is used for styling, and **Geist** font ensures modern clarity.
 
-💫 Modern Simplicity: Smooth animations, responsive layouts, and readable fonts
+---
 
-We use Tailwind CSS for styling and Geist font (optimized by next/font) for sleek typography.
+## 💡 Tech Stack
 
-🛍️ Core Features
+| Category          | Technology                                        |
+| ----------------- | ------------------------------------------------- |
+| 🧠 Framework      | Next.js                                           |
+| 🎨 Styling        | Tailwind CSS                                      |
+| 🔐 Authentication | Email/Password + Cardano Wallet (Designers)       |
+| 🗃️ Database      | PostgreSQL (via Prisma)                           |
+| 🔗 Blockchain     | Cardano (off-chain auth, on-chain payments later) |
+| ☁️ Deployment     | Vercel                                            |
 
-✨ Product Discovery:
-Browse curated traditional clothing with rich visuals and category filters.
+---
 
-🪶 Authentication Made Simple:
+## 🚀 Deployment
 
-Buyers → Google Sign-In
+Deploy easily using **Vercel**, the platform built for Next.js applications.
 
-Sellers → National ID / FIDA verification
+---
 
-🧺 Smart Shopping Experience:
-Seamless cart management and personalized recommendations.
-
-🔒 Secure & Trusted:
-Data protection and verified artisan accounts ensure safety for everyone.
-
-📱 Fully Responsive:
-Optimized for all devices — from phones to desktops.
-
-🚀 Deployment
-
-Deploy easily with Vercel, the platform made by the creators of Next.js 🌐
-
-💡 Tech Stack
-| Category          | Technology                               |
-| ----------------- | ---------------------------------------- |
-| 🧠 Framework      | [Next.js](https://nextjs.org/)           |
-| 🎨 Styling        | [Tailwind CSS](https://tailwindcss.com/) |
-| 🔐 Authentication | Google / National ID (FIDA Integration)  |
-| 🗃️ Database      | MySQL / Firebase (future integration)    |
-| ☁️ Deployment     | [Vercel](https://vercel.com)             |
-| 🖋️ Font          | Geist by Vercel                          |
-
-
-🤝 Contributing
+## 🤝 Contributing
 
 We ❤️ contributions!
-If you’d like to help improve Saba, here’s how:
 
-Fork the repository 🍴
+1. Fork the repository
+2. Create a new branch
+3. Make your changes
+4. Submit a pull request
 
-Create a new branch 💡
+---
 
-Make your changes ✨
+## 🌸 About the Project
 
-Submit a pull request 🚀
+Saba is a digital initiative focused on preserving tradition while embracing modern technology.
+By combining culture, design, and secure authentication, Saba empowers local artisans to thrive in a digital world.
 
-Your ideas and creativity are always welcome!
-
-📸 Sneak Peek (Coming Soon)
-
-We’re currently designing Saba’s landing page and product UI in Figma.
-Expect a clean, elegant, and responsive layout — perfectly blending modern UI with traditional warmth.
-
-🌸 About the Project
-
-Saba is part of a digital initiative to make local culture accessible and sustainable.
-We believe that technology can preserve tradition and empower communities.
-
-🧶 “Woven by hands, powered by code.”
+🧶 *“Woven by hands, powered by code.”*
