@@ -1,26 +1,74 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { compare } from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
-export async function POST(req: Request) {
-  const { email, password } = await req.json();
+export async function POST(req: NextRequest) {
+  try {
+    const { email, password } = await req.json()
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: { designerProfile: true },
-  });
+    console.log("Login attempt for:", email)
 
-  if (!user) return NextResponse.json({ error: "Invalid email" }, { status: 404 });
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 }
+      )
+    }
 
-  const valid = await compare(password, user.password);
-  if (!valid) return NextResponse.json({ error: "Wrong password" }, { status: 401 });
+    // Find user with designer profile
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        designerProfile: true
+      }
+    })
 
-  const token = jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.NEXTAUTH_SECRET!,
-    { expiresIn: "7d" }
-  );
+    if (!user) {
+      console.error("User not found:", email)
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      )
+    }
 
-  return NextResponse.json({ token, user });
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password)
+    if (!isValidPassword) {
+      console.error("Invalid password for:", email)
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      )
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        email: user.email, 
+        role: user.role 
+      },
+      process.env.JWT_SECRET || "your-secret-key-change-this",
+      { expiresIn: "7d" }
+    )
+
+    console.log("Login successful for:", user.id)
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user
+
+    return NextResponse.json({
+      success: true,
+      token,
+      user: userWithoutPassword
+    })
+
+  } catch (error: any) {
+    console.error("Login error:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
 }

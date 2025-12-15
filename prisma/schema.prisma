@@ -50,6 +50,7 @@ model User {
   cardanoAddress  String?  @unique
   walletNonce     String?
   walletVerified  Boolean  @default(false)
+  walletConnectedAt DateTime? 
 
   designerProfile DesignerProfile?
   orders          Order[]
@@ -70,15 +71,20 @@ model DesignerProfile {
   socialLinks     String?
   contactInfo     String?
 
-  nationalId      String?           // Ethiopian national ID number
-  idImage         String?           // Cloudinary URL of scanned ID
+  nationalId      String?
+  idImage         String?
   isVerified      Boolean  @default(false)
   verifiedAt      DateTime?
-
+  
+  
+  walletAddress   String?  
+  walletVerified  Boolean  @default(false)
+  walletVerifiedAt DateTime?
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  products        Product[]          // All products by this designer
+  products        Product[]
 }
 
 model Category {

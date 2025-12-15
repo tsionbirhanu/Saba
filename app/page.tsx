@@ -9,9 +9,6 @@ export default function Home() {
       <Header />
       <Hero />
       <BestsellerSection />
-    
-
-
       <Footer />
     </main>
   )
