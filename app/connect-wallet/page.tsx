@@ -13,7 +13,6 @@ import {
   ExternalLink,
   RefreshCw,
   Lock,
-  Unlock
 } from "lucide-react"
 
 export default function ConnectWalletPage() {
@@ -28,7 +27,6 @@ export default function ConnectWalletPage() {
   const [connectionError, setConnectionError] = useState("")
   const [isWalletLocked, setIsWalletLocked] = useState(false)
 
-  // Detect wallets
   useEffect(() => {
     const checkWallets = () => {
       if (typeof window === 'undefined') return
@@ -45,7 +43,6 @@ export default function ConnectWalletPage() {
       setDetectedWallets(wallets)
       console.log('📱 Detected wallets:', wallets)
       
-      // Auto-select first wallet
       if (wallets.length > 0 && !selectedWallet) {
         setSelectedWallet(wallets[0])
         setStatus(`Selected ${getWalletName(wallets[0])}. Click "Connect Wallet"`)
@@ -57,7 +54,6 @@ export default function ConnectWalletPage() {
     return () => clearInterval(interval)
   }, [selectedWallet])
 
-  // Check if user is logged in
   useEffect(() => {
     const token = localStorage.getItem("token")
     const userStr = localStorage.getItem("user")
@@ -78,14 +74,13 @@ export default function ConnectWalletPage() {
     }
   }, [router])
 
-  // Convert string to hex
+ 
   const stringToHex = (str: string): string => {
     return Array.from(str).map(c => 
       c.charCodeAt(0).toString(16).padStart(2, '0')
     ).join('')
   }
 
-  // Get wallet display name
   const getWalletName = (walletId: string): string => {
     const names: Record<string, string> = {
       nami: 'Nami Wallet',
@@ -99,7 +94,6 @@ export default function ConnectWalletPage() {
     return names[walletId] || walletId
   }
 
-  // Get wallet icon
   const getWalletIcon = (walletId: string): string => {
     const icons: Record<string, string> = {
       nami: '🦊',
@@ -127,7 +121,6 @@ export default function ConnectWalletPage() {
     setIsWalletLocked(false)
 
     try {
-      // 1. Connect to wallet with timeout
       const connectionPromise = window.cardano[selectedWallet].enable()
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Connection timeout (10s)')), 10000)
@@ -135,10 +128,9 @@ export default function ConnectWalletPage() {
       
       const api = await Promise.race([connectionPromise, timeoutPromise])
       
-      // 2. Get address - try multiple methods
       let address = ""
       
-      // Try different methods to get address
+     
       if (api.getChangeAddress) {
         address = await api.getChangeAddress()
       } else if (api.getUsedAddresses) {
@@ -165,7 +157,6 @@ export default function ConnectWalletPage() {
       setStatus(`✅ Connected! Address: ${address.substring(0, 10)}...`)
       setStep("sign")
       
-      // Auto-proceed to signing after 1 second
       setTimeout(() => {
         handleSignMessage(api, address)
       }, 1000)
@@ -216,12 +207,11 @@ export default function ConnectWalletPage() {
       
       setStatus("Please sign the message in your wallet popup...")
 
-      // Sign the message
+      
       let signatureData
       
       try {
         if (api.signData) {
-          // For Lace wallet, ALWAYS use hex nonce
           const messageToSign = hexNonce || stringToHex(nonce)
           console.log("Signing with:", selectedWallet === 'lace' ? 'hex nonce' : 'text nonce')
           
@@ -232,7 +222,7 @@ export default function ConnectWalletPage() {
       } catch (signError: any) {
         console.error("❌ Signing error:", signError)
         
-        // Try with alternative encoding
+        
         try {
           const alternativeMessage = selectedWallet === 'lace' ? nonce : stringToHex(nonce)
           console.log("Retrying with alternative encoding...")
@@ -248,7 +238,6 @@ export default function ConnectWalletPage() {
 
       console.log("✅ Signature received. Length:", signatureData.signature.length)
 
-      // Verify with backend
       setStatus("Verifying signature...")
       
       const verifyRes = await fetch("/api/auth/seller/verify", {
@@ -273,11 +262,10 @@ export default function ConnectWalletPage() {
         throw new Error(responseData.error || "Verification failed")
       }
 
-      // ✅ SUCCESS!
       setStatus("✅ Wallet verified successfully!")
       setStep("success")
       
-      // Update local storage
+
       const userStr = localStorage.getItem("user")
       if (userStr) {
         const user = JSON.parse(userStr)
@@ -290,7 +278,6 @@ export default function ConnectWalletPage() {
         localStorage.setItem("user", JSON.stringify(user))
       }
 
-      // Redirect after delay
       setTimeout(() => {
         router.push("/seller-dashboard")
       }, 2000)
@@ -355,7 +342,6 @@ export default function ConnectWalletPage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          {/* Header */}
           <div className="text-center mb-6">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-red-50 to-orange-50 flex items-center justify-center">
               <Wallet className="w-8 h-8 text-[#800020]" />
@@ -370,7 +356,7 @@ export default function ConnectWalletPage() {
             </p>
           </div>
 
-          {/* Wallet Locked Warning */}
+          
           {isWalletLocked && (
             <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="flex items-center gap-3">
@@ -387,7 +373,7 @@ export default function ConnectWalletPage() {
             </div>
           )}
 
-          {/* Connection Error */}
+          
           {connectionError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-3">
@@ -400,7 +386,7 @@ export default function ConnectWalletPage() {
             </div>
           )}
 
-          {/* Step Indicator */}
+         
           <div className="flex justify-center mb-8">
             <div className="flex items-center">
               {["Select", "Connect", "Verify"].map((label, index) => (
@@ -429,7 +415,7 @@ export default function ConnectWalletPage() {
             </div>
           </div>
 
-          {/* Status Message */}
+         
           {status && (
             <div className={`mb-6 p-4 rounded-lg border ${
               status.includes('✅') || status.includes('Success')
@@ -453,7 +439,6 @@ export default function ConnectWalletPage() {
             </div>
           )}
 
-          {/* Step 1: Select Wallet */}
           {step === "select" && (
             <>
               <div className="mb-6">
@@ -515,11 +500,9 @@ export default function ConnectWalletPage() {
                   )}
                 </Button>
 
-                {/* Test Mode Button - For Development */}
                 {process.env.NODE_ENV === 'development' && (
                   <Button
                     onClick={() => {
-                      // Mock successful connection for testing
                       const userStr = localStorage.getItem("user")
                       if (userStr) {
                         const user = JSON.parse(userStr)
@@ -546,7 +529,6 @@ export default function ConnectWalletPage() {
             </>
           )}
 
-          {/* Step 2: Sign Message */}
           {step === "sign" && (
             <div className="text-center py-4">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
@@ -600,7 +582,6 @@ export default function ConnectWalletPage() {
             </div>
           )}
 
-          {/* Step 3: Success */}
           {step === "success" && (
             <div className="text-center py-4">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
@@ -625,7 +606,6 @@ export default function ConnectWalletPage() {
             </div>
           )}
 
-          {/* Help Section */}
           <div className="mt-8 pt-6 border-t border-gray-100">
             <details className="group">
               <summary className="flex items-center justify-between cursor-pointer text-sm text-gray-600 hover:text-gray-900">
@@ -639,7 +619,7 @@ export default function ConnectWalletPage() {
                     <li>Click the Lace extension icon in your browser toolbar</li>
                     <li>Enter your password to unlock the wallet</li>
                     <li>Refresh this page</li>
-                    <li>Click "Connect Wallet" above</li>
+                    <li>Click &quot;Connect Wallet&quot; above</li>
                     <li>Approve the connection request in the Lace popup</li>
                     <li>Approve the signing request when prompted</li>
                   </ol>

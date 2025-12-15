@@ -31,7 +31,6 @@ export default function LoginPage() {
     setWalletConflict({ show: false, message: "" })
 
     try {
-      // 1. Perform login
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,18 +43,15 @@ export default function LoginPage() {
         throw new Error(data.error || "Login failed")
       }
 
-      // Store token and user data
       localStorage.setItem("token", data.token)
       localStorage.setItem("user", JSON.stringify(data.user))
       localStorage.setItem("email", email)
 
       setStatusMessage("Login successful! Checking wallet status...")
 
-      // 2. Handle role-based routing with wallet checks
       if (data.user.role === "DESIGNER") {
         await handleDesignerLogin(data.token, data.user)
       } else {
-        // For BUYER role - direct to home
         router.push("/")
       }
 
@@ -67,14 +63,10 @@ export default function LoginPage() {
 
   const handleDesignerLogin = async (token: string, user: any) => {
     try {
-      // Check if user already has wallet connected
       if (user.walletVerified && user.cardanoAddress) {
-        // User already has wallet - go to dashboard
         router.push("/seller-dashboard")
         return
       }
-
-      // Check wallet status with backend
       const walletRes = await fetch("/api/auth/seller/wallet-status", {
         headers: { "Authorization": `Bearer ${token}` }
       })
@@ -83,7 +75,6 @@ export default function LoginPage() {
         const walletData = await walletRes.json()
         
         if (walletData.status === "connected_to_other") {
-          // Wallet is connected to another account
           setWalletConflict({
             show: true,
             message: `Your Cardano wallet is already connected to another Saba account.`,
@@ -96,24 +87,20 @@ export default function LoginPage() {
         }
       }
 
-      // No wallet conflict - proceed to connect wallet
       router.push("/connect-wallet")
 
     } catch (error) {
       console.error("Wallet check error:", error)
-      // If wallet check fails, still proceed to connect-wallet
       router.push("/connect-wallet")
     }
   }
 
   const handleContinueAnyway = () => {
-    // User chooses to continue despite wallet conflict
     setWalletConflict({ show: false, message: "" })
     router.push("/connect-wallet")
   }
 
   const handleUseDifferentAccount = () => {
-    // Suggest user to login with the other account
     if (walletConflict.otherEmail) {
       setEmail(walletConflict.otherEmail)
       setPassword("")
@@ -144,13 +131,11 @@ export default function LoginPage() {
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-2xl p-8">
-            {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Saba</h1>
               <p className="text-gray-600">Sign in to your account</p>
             </div>
 
-            {/* Wallet Conflict Warning */}
             {walletConflict.show && (
               <div className="mb-6 animate-fade-in">
                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -221,10 +206,8 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Login Form (only show if no wallet conflict) */}
             {!walletConflict.show && (
               <div className="space-y-6">
-                {/* Email Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -240,7 +223,6 @@ export default function LoginPage() {
                   />
                 </div>
 
-                {/* Password Input */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -273,8 +255,6 @@ export default function LoginPage() {
                     </button>
                   </div>
                 </div>
-
-                {/* Status Message */}
                 {statusMessage && (
                   <div className={`p-3 rounded-lg text-sm ${
                     statusMessage.includes('successful') 
@@ -291,8 +271,6 @@ export default function LoginPage() {
                     </div>
                   </div>
                 )}
-
-                {/* Login Button */}
                 <Button
                   onClick={handleLogin}
                   disabled={isLoading}
@@ -307,8 +285,6 @@ export default function LoginPage() {
                     "Sign In"
                   )}
                 </Button>
-
-                {/* Divider */}
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
@@ -318,10 +294,9 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Sign Up Link */}
                 <div className="text-center">
                   <p className="text-gray-600 text-sm">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link 
                       href="/register" 
                       className="text-[#800020] font-semibold hover:underline"
@@ -331,10 +306,9 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {/* User Type Info */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <p className="text-xs text-gray-500 text-center">
-                    <span className="font-medium">Designers:</span> You'll need to connect a Cardano wallet after login
+                    <span className="font-medium">Designers:</span> You&apos;ll need to connect a Cardano wallet after login
                     <br/>
                     <span className="font-medium">Buyers:</span> Direct access to shopping
                   </p>
@@ -342,7 +316,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Help Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="text-center">
                 <p className="text-xs text-gray-500">
@@ -361,8 +334,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-
-      {/* Add custom animation */}
       <style jsx>{`
         @keyframes fade-in {
           from {
