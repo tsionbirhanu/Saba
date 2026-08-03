@@ -1,16 +1,29 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { getClientIp, rateLimit } from "@/lib/rate-limit"
+import { getErrorCode, getErrorDetails } from "@/lib/errors"
+
+const SALT_ROUNDS = 10
+const PUBLIC_ROLES = new Set(["BUYER", "DESIGNER"])
 
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password, role } = await req.json()
+    const normalizedEmail = String(email || "").toLowerCase().trim()
 
-    console.log("Registration attempt:", { name, email, role })
+    const limited = rateLimit({
+      key: `register:${getClientIp(req)}:${normalizedEmail}`,
+      limit: 3,
+      windowMs: 60 * 60 * 1000,
+    })
+    if (limited) return limited
+
+    console.log("Registration attempt:", { name, email: normalizedEmail, role })
 
     // Validate input
-    if (!name || !email || !password || !role) {
-      console.error("Missing fields:", { name, email, password, role })
+    if (!name || !normalizedEmail || !password || !role) {
+      console.error("Missing fields:", { name, email: normalizedEmail, hasPassword: !!password, role })
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -19,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
@@ -34,13 +47,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (!PUBLIC_ROLES.has(role)) {
+      return NextResponse.json(
+        { error: "Invalid role" },
+        { status: 400 }
+      )
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email: normalizedEmail }
     })
 
     if (existingUser) {
-      console.error("User already exists:", email)
+      console.error("User already exists:", normalizedEmail)
       return NextResponse.json(
         { error: "User with this email already exists" },
         { status: 400 }
@@ -48,44 +68,61 @@ export async function POST(req: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
 
-    // Prepare user data
-    const userData: any = {
+    const isDesigner = role === "DESIGNER"
+    const userData = {
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
-      role: role === "DESIGNER" ? "DESIGNER" : "BUYER",
+      role: isDesigner ? "DESIGNER" : "BUYER",
       walletVerified: false,
       cardanoAddress: null,
-      walletNonce: null
+      walletNonce: null,
+      ...(isDesigner
+        ? {
+            designerProfile: {
+              create: {
+                isVerified: false,
+                walletAddress: null,
+                walletVerified: false,
+              },
+            },
+          }
+        : {}),
     }
 
-    // Add designer profile if role is DESIGNER
-    if (role === "DESIGNER") {
-      userData.designerProfile = {
-        create: {
-          isVerified: false,
-          walletAddress: null,
-          walletVerified: false
-        }
-      }
-    }
-
-    console.log("Creating user with data:", userData)
+    console.log("Creating user with data:", {
+      name,
+      email: normalizedEmail,
+      role: userData.role,
+      designerProfile: isDesigner,
+    })
 
     // Create user
     const user = await prisma.user.create({
       data: userData,
       include: {
-        designerProfile: role === "DESIGNER"
+        designerProfile: isDesigner
       }
     })
 
     console.log("User created successfully:", user.id)
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user
+    const userWithoutPassword = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profileImage: user.profileImage,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      cardanoAddress: user.cardanoAddress,
+      walletVerified: user.walletVerified,
+      walletConnectedAt: user.walletConnectedAt,
+      designerProfile: user.designerProfile,
+    }
 
     return NextResponse.json(
       { 
@@ -96,22 +133,23 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const details = getErrorDetails(error)
+    const code = getErrorCode(error)
     console.error("Registration error details:", {
-      message: error.message,
-      code: error.code,
-      stack: error.stack
+      ...details,
+      code,
     })
     
     // Handle Prisma errors
-    if (error.code === 'P2002') {
+    if (code === 'P2002') {
       return NextResponse.json(
         { error: "Email already exists" },
         { status: 400 }
       )
     }
     
-    if (error.code === 'P2003') {
+    if (code === 'P2003') {
       return NextResponse.json(
         { error: "Invalid data provided" },
         { status: 400 }

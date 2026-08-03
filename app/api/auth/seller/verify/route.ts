@@ -1,34 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import jwt from "jsonwebtoken"
-import crypto from "crypto"
+import { requireAuth } from "@/lib/auth"
+import { getErrorCode, getErrorMessage } from "@/lib/errors"
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization")
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: "Authorization header missing" },
-        { status: 401 }
-      )
-    }
-
-    const token = authHeader.split(" ")[1]
-    let decoded: any;
-    
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key-change-this")
-    } catch (jwtError) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 }
-      )
-    }
+    const auth = requireAuth(req, ["DESIGNER"])
+    if (auth.response) return auth.response
 
     const { signature, walletAddress, key, hexNonce, walletType } = await req.json()
 
     console.log("🔐 Wallet verification attempt:", {
-      userId: decoded.id,
+      userId: auth.user.id,
       walletAddressPreview: walletAddress?.substring(0, 20) + '...',
       walletAddressLength: walletAddress?.length,
       signatureLength: signature?.length,
@@ -44,9 +27,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (!isValidCardanoAddress(walletAddress)) {
+      return NextResponse.json(
+        { error: "Invalid wallet address" },
+        { status: 400 }
+      )
+    }
+
     // Get user with nonce
     const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
+      where: { id: auth.user.id },
       include: { designerProfile: true }
     })
 
@@ -78,7 +68,7 @@ export async function POST(req: NextRequest) {
     if (isNaN(nonceTimestamp) || Date.now() - nonceTimestamp > 5 * 60 * 1000) {
       // Clear expired nonce
       await prisma.user.update({
-        where: { id: decoded.id },
+        where: { id: auth.user.id },
         data: { walletNonce: null }
       })
       return NextResponse.json(
@@ -117,7 +107,7 @@ export async function POST(req: NextRequest) {
     if (!isSignatureValid) {
       // Clear invalid nonce
       await prisma.user.update({
-        where: { id: decoded.id },
+        where: { id: auth.user.id },
         data: { walletNonce: null }
       })
       
@@ -131,7 +121,7 @@ export async function POST(req: NextRequest) {
     const existingUserWithWallet = await prisma.user.findFirst({
       where: {
         cardanoAddress: walletAddress,
-        id: { not: decoded.id },
+        id: { not: auth.user.id },
         walletVerified: true
       }
     })
@@ -145,7 +135,7 @@ export async function POST(req: NextRequest) {
 
     // ✅ SUCCESS - Update database
     const updatedUser = await prisma.user.update({
-      where: { id: decoded.id },
+      where: { id: auth.user.id },
       data: {
         walletVerified: true,
         cardanoAddress: walletAddress,
@@ -158,7 +148,7 @@ export async function POST(req: NextRequest) {
     // Also update designer profile
     if (user.designerProfile) {
       await prisma.designerProfile.update({
-        where: { userId: decoded.id },
+        where: { userId: auth.user.id },
         data: {
           walletAddress: walletAddress,
           walletVerified: true,
@@ -169,7 +159,7 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("✅ Wallet verification SUCCESSFUL for:", {
-      userId: decoded.id,
+      userId: auth.user.id,
       walletAddressPreview: walletAddress?.substring(0, 20) + '...',
       walletType
     })
@@ -187,31 +177,25 @@ export async function POST(req: NextRequest) {
       }
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const code = getErrorCode(error)
     console.error("❌ Wallet verification error:", {
-      message: error.message,
-      code: error.code
+      message: getErrorMessage(error),
+      code: code
     })
     
     // Handle specific errors
-    if (error.code === 'P2025') {
+    if (code === 'P2025') {
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
       )
     }
     
-    if (error.name === 'JsonWebTokenError') {
-      return NextResponse.json(
-        { error: "Invalid authentication token" },
-        { status: 401 }
-      )
-    }
-
     return NextResponse.json(
       { 
         error: "Verification failed. Please try again.",
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? getErrorMessage(error) : undefined
       },
       { status: 500 }
     )
@@ -244,20 +228,6 @@ function isValidCardanoAddress(address: string): boolean {
   })
   
   return isValid
-}
-
-// Function to convert hex to string
-function hexToString(hex: string): string {
-  try {
-    let str = ''
-    for (let i = 0; i < hex.length; i += 2) {
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
-    }
-    return str
-  } catch (error) {
-    console.error("Hex to string conversion error:", error)
-    return ''
-  }
 }
 
 // Signature verification - SIMPLIFIED FOR DEVELOPMENT
@@ -299,5 +269,5 @@ async function verifyCardanoSignature(
 
   // Production verification would go here
   console.warn("⚠️ PRODUCTION: Implement proper signature verification!")
-  return true // Temporary for development
+  return false
 }

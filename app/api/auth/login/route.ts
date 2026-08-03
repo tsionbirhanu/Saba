@@ -2,14 +2,25 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { getJwtSecret } from "@/lib/jwt"
+import { getClientIp, rateLimit } from "@/lib/rate-limit"
+import { getErrorMessage } from "@/lib/errors"
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json()
+    const normalizedEmail = String(email || "").toLowerCase().trim()
 
-    console.log("Login attempt for:", email)
+    const limited = rateLimit({
+      key: `login:${getClientIp(req)}:${normalizedEmail}`,
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    })
+    if (limited) return limited
 
-    if (!email || !password) {
+    console.log("Login attempt for:", normalizedEmail)
+
+    if (!normalizedEmail || !password) {
       return NextResponse.json(
         { error: "Email and password are required" },
         { status: 400 }
@@ -18,14 +29,14 @@ export async function POST(req: NextRequest) {
 
     // Find user with designer profile
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
       include: {
         designerProfile: true
       }
     })
 
     if (!user) {
-      console.error("User not found:", email)
+      console.error("User not found:", normalizedEmail)
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -35,7 +46,7 @@ export async function POST(req: NextRequest) {
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password)
     if (!isValidPassword) {
-      console.error("Invalid password for:", email)
+      console.error("Invalid password for:", normalizedEmail)
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -49,14 +60,26 @@ export async function POST(req: NextRequest) {
         email: user.email, 
         role: user.role 
       },
-      process.env.JWT_SECRET || "your-secret-key-change-this",
+      getJwtSecret(),
       { expiresIn: "7d" }
     )
 
     console.log("Login successful for:", user.id)
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user
+    const userWithoutPassword = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profileImage: user.profileImage,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      cardanoAddress: user.cardanoAddress,
+      walletVerified: user.walletVerified,
+      walletConnectedAt: user.walletConnectedAt,
+      designerProfile: user.designerProfile,
+    }
 
     return NextResponse.json({
       success: true,
@@ -64,8 +87,8 @@ export async function POST(req: NextRequest) {
       user: userWithoutPassword
     })
 
-  } catch (error: any) {
-    console.error("Login error:", error)
+  } catch (error: unknown) {
+    console.error("Login error:", getErrorMessage(error))
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,7 +1,7 @@
 // app/api/products/[id]/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(
   req: NextRequest,
@@ -18,7 +18,11 @@ export async function GET(
       where: { id },
       include: {
         designerProfile: {
-          include: { user: true },
+          include: {
+            user: {
+              select: { id: true, name: true, email: true, profileImage: true },
+            },
+          },
         },
         category: true,
       },
@@ -29,7 +33,7 @@ export async function GET(
     }
 
     return NextResponse.json(product);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching product:", error);
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
   }
@@ -42,27 +46,31 @@ export async function DELETE(
   try {
     const { id: productId } = await context.params;
 
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = requireAuth(req, ["DESIGNER", "ADMIN"]);
+    if (auth.response) return auth.response;
 
-    const token = authHeader.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
-    const userId = decoded.id;
-
-    const designer = await prisma.designerProfile.findUnique({
-      where: { userId },
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        designerProfile: {
+          select: { userId: true },
+        },
+      },
     });
 
-    if (!designer)
-      return NextResponse.json({ error: "Only designers can delete" }, { status: 403 });
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    if (auth.user.role !== "ADMIN" && product.designerProfile.userId !== auth.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     await prisma.product.delete({ where: { id: productId } });
 
     return NextResponse.json({ message: "Product deleted successfully" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting product:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
   }
 }

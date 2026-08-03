@@ -1,20 +1,31 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader) return NextResponse.json({ error: "No token" }, { status: 401 });
+  const auth = requireAuth(req);
+  if (auth.response) return auth.response;
 
-  const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { id: string };
     const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-      include: { designerProfile: true },
+      where: { id: auth.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phoneNumber: true,
+        role: true,
+        profileImage: true,
+        createdAt: true,
+        updatedAt: true,
+        cardanoAddress: true,
+        walletVerified: true,
+        walletConnectedAt: true,
+        designerProfile: true,
+      },
     });
     return NextResponse.json(user);
   } catch {
-    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
   }
 }

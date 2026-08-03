@@ -2,11 +2,13 @@
 import { prisma } from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse, NextRequest } from "next/server";
+import { requireAuth } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/errors";
 
 cloudinary.config({
-  cloud_name: "dbv5nikjh",
-  api_key: "524975245944111",
-  api_secret: "K3yw9qV5vXFF4oJQZutLGmZVbF0",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export async function POST(
@@ -15,6 +17,12 @@ export async function POST(
 ) {
   try {
     const { id } = await context.params; // unwrap the promise
+    const auth = requireAuth(req, ["DESIGNER"]);
+    if (auth.response) return auth.response;
+
+    if (auth.user.id !== id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -28,12 +36,13 @@ export async function POST(
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload file to Cloudinary
-    const result: any = await new Promise((resolve, reject) => {
+    const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: "id_cards" },
         (error, result) => {
           if (error) reject(error);
-          else resolve(result);
+          else if (result?.secure_url) resolve({ secure_url: result.secure_url });
+          else reject(new Error("Cloudinary upload did not return a URL"));
         }
       );
       stream.end(buffer);
@@ -49,8 +58,8 @@ export async function POST(
     });
 
     return NextResponse.json({ message: "ID uploaded", profile: updated });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error uploading ID:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 }

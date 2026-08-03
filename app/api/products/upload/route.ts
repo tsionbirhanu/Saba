@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
+import { requireAuth } from "@/lib/auth";
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_URL?.split("@")[1],
@@ -9,6 +10,9 @@ cloudinary.v2.config({
 
 export async function POST(req: Request) {
   try {
+    const auth = requireAuth(req, ["DESIGNER"]);
+    if (auth.response) return auth.response;
+
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
@@ -28,7 +32,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(uploadResponse);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error("Error uploading product image:", error);
+    return NextResponse.json({ error: "Failed to upload product image" }, { status: 500 });
   }
 }

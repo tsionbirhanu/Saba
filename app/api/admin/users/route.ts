@@ -1,17 +1,12 @@
 // app/api/admin/users/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    if (decoded.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const auth = requireAuth(req, ["ADMIN"]);
+    if (auth.response) return auth.response;
 
     const users = await prisma.user.findMany({
       select: {

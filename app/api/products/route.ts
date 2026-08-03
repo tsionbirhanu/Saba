@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyToken } from "@/lib/verifyToken"; // ✅ centralized auth helper
+import { requireAuth } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/errors";
 
-// ✅ GET all products (optionally filtered by category or designer)
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId");
     const designerProfileId = searchParams.get("designerProfileId");
 
-    const filters: any = {};
+    const filters: { categoryId?: string; designerProfileId?: string } = {};
     if (categoryId) filters.categoryId = categoryId;
     if (designerProfileId) filters.designerProfileId = designerProfileId;
 
@@ -33,22 +33,19 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(products, { status: 200 });
-  } catch (error: any) {
-    console.error("❌ Error fetching products:", error);
+  } catch (error) {
+    console.error("Error fetching products:", error);
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
 }
 
-// ✅ POST (create product) — only for authenticated designers
 export async function POST(req: Request) {
   try {
-    const user = await verifyToken(req); // centralized token verification
-    if (!user)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = requireAuth(req, ["DESIGNER"]);
+    if (auth.response) return auth.response;
 
-    // check if the user has a designer profile
     const designer = await prisma.designerProfile.findUnique({
-      where: { userId: user.id },
+      where: { userId: auth.user.id },
     });
 
     if (!designer) {
@@ -85,8 +82,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(product, { status: 201 });
-  } catch (error: any) {
-    console.error("❌ Error creating product:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("Error creating product:", error);
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 // app/api/designers/[id]/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(
   req: NextRequest,
@@ -44,13 +44,11 @@ export async function PUT(
   try {
     const { id } = await context.params; // unwrap the promise
 
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    const auth = requireAuth(req, ["DESIGNER"]);
+    if (auth.response) return auth.response;
 
     // Only allow the designer to update their own profile
-    if (decoded.id !== id) {
+    if (auth.user.id !== id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

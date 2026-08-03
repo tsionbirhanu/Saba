@@ -1,14 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
-    const userId = decoded.id;
+    const auth = requireAuth(req);
+    if (auth.response) return auth.response;
+    const userId = auth.user.id;
 
     const body = await req.json();
     const { productId } = body;
@@ -34,8 +32,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(favorite, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error adding favorite:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to add favorite" }, { status: 500 });
   }
 }
