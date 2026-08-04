@@ -31,6 +31,7 @@ import {
   getProducts,
   suggestImageTags,
   updateOrderStatus,
+  uploadDesignerId,
   uploadProductImage,
 } from "@/lib/api-client";
 
@@ -54,6 +55,11 @@ export default function SellerDashboard() {
   const [allProducts, setAllProducts] = useState<ApiProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState("");
+  const [verificationForm, setVerificationForm] = useState<{ nationalId: string; file: File | null }>({
+    nationalId: "",
+    file: null,
+  });
   const [formStatus, setFormStatus] = useState("");
   const [form, setForm] = useState<ProductForm>({
     name: "",
@@ -241,6 +247,27 @@ export default function SellerDashboard() {
     }
   }
 
+  async function handleSubmitVerification(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setVerificationStatus("Submitting verification...");
+
+    try {
+      if (!user) throw new Error("Please log in again.");
+      if (!verificationForm.nationalId.trim()) throw new Error("Enter your National ID number.");
+      if (!verificationForm.file) throw new Error("Upload a National ID image.");
+
+      await uploadDesignerId(user.id, {
+        nationalId: verificationForm.nationalId.trim(),
+        file: verificationForm.file,
+      });
+      setVerificationStatus("Verification submitted. Admin approval is required before your products appear publicly.");
+      setVerificationForm({ nationalId: "", file: null });
+      await loadDashboard();
+    } catch (error) {
+      setVerificationStatus(error instanceof Error ? error.message : "Could not submit verification.");
+    }
+  }
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -284,14 +311,30 @@ export default function SellerDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Welcome back, {user.name || "Seller"}!</h2>
-                <p className="opacity-90">Your dashboard is powered by your real products and order history.</p>
+                <p className="opacity-90">
+                  {user.designerProfile?.isVerified
+                    ? "Your verified shop is publicly visible to buyers."
+                    : "You can prepare products now. They become public after National ID verification."}
+                </p>
               </div>
-              <Button className="bg-white text-[#800020] hover:bg-gray-100 font-semibold" onClick={() => setActiveTab("products")}>
+              <Button
+                className="bg-white text-[#800020] hover:bg-gray-100 font-semibold"
+                onClick={() => setActiveTab(user.designerProfile?.isVerified ? "products" : "settings")}
+              >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Product
+                {user.designerProfile?.isVerified ? "Add New Product" : "Submit Verification"}
               </Button>
             </div>
           </div>
+
+          {!user.designerProfile?.isVerified && (
+            <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-5">
+              <h2 className="font-semibold text-amber-950 mb-1">Verification required before public selling</h2>
+              <p className="text-sm text-amber-900">
+                Your account is active, and you can prepare your shop. Buyers will not see your products until an admin approves your National ID submission.
+              </p>
+            </div>
+          )}
 
           <div className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-xl max-w-3xl">
             {[
@@ -343,6 +386,11 @@ export default function SellerDashboard() {
 
                 <form onSubmit={handleCreateProduct} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900">Add Product</h3>
+                  {!user.designerProfile?.isVerified && (
+                    <p className="rounded-lg bg-amber-50 border border-amber-100 p-3 text-sm text-amber-900">
+                      You can save products now, but they stay hidden from buyers until your seller verification is approved.
+                    </p>
+                  )}
                   <input
                     value={form.name}
                     onChange={(event) => setForm({ ...form, name: event.target.value })}
@@ -474,6 +522,69 @@ export default function SellerDashboard() {
               </div>
             )}
 
+            {activeTab === "settings" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Designer Verification</h3>
+                  <p className="text-sm text-gray-600 mb-5">
+                    Submit your National ID after registration. Admin approval adds the verified badge and makes your products visible in the shop.
+                  </p>
+
+                  <div className="mb-5 rounded-lg bg-gray-50 p-4">
+                    <p className="text-sm font-medium text-gray-900">
+                      Status: {user.designerProfile?.isVerified ? "Verified" : user.designerProfile?.idImage ? "Submitted for review" : "Not submitted"}
+                    </p>
+                    {user.designerProfile?.verifiedAt && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Approved on {new Date(user.designerProfile.verifiedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+
+                  {!user.designerProfile?.isVerified && (
+                    <form onSubmit={handleSubmitVerification} className="space-y-4">
+                      <input
+                        value={verificationForm.nationalId}
+                        onChange={(event) =>
+                          setVerificationForm({ ...verificationForm, nationalId: event.target.value })
+                        }
+                        placeholder="National ID number"
+                        className="w-full px-4 py-2 border rounded-lg"
+                        required
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) =>
+                          setVerificationForm({
+                            ...verificationForm,
+                            file: event.target.files?.[0] || null,
+                          })
+                        }
+                        className="w-full px-4 py-2 border rounded-lg"
+                        required
+                      />
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                        Submit for approval
+                      </Button>
+                    </form>
+                  )}
+
+                  {verificationStatus && <p className="mt-4 text-sm text-gray-600">{verificationStatus}</p>}
+                </section>
+
+                <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">How seller approval works</h3>
+                  <div className="space-y-3 text-sm text-gray-600">
+                    <p>1. Register normally with email and password.</p>
+                    <p>2. Prepare your profile and products in this dashboard.</p>
+                    <p>3. Submit National ID here for admin review.</p>
+                    <p>4. Once approved, your products appear in the shop with a verified badge.</p>
+                  </div>
+                </section>
+              </div>
+            )}
+
           </div>
         </div>
       </main>
@@ -561,10 +672,14 @@ function ProductTable({
                     <td className="py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          product.stock > 0 ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                          !product.designerProfile?.isVerified
+                            ? "bg-amber-100 text-amber-800"
+                            : product.stock > 0
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
-                        {product.stock > 0 ? "Active" : "Out of Stock"}
+                        {!product.designerProfile?.isVerified ? "Hidden until verified" : product.stock > 0 ? "Public" : "Out of Stock"}
                       </span>
                     </td>
                     <td className="py-4">

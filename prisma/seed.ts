@@ -92,13 +92,9 @@ const seedProducts = [
 ];
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
+  const email = process.env.ADMIN_EMAIL || "admin@saba.local";
+  const password = process.env.ADMIN_PASSWORD || "SeedAdmin123!";
   const name = process.env.ADMIN_NAME || "Admin";
-
-  if (!email || !password) {
-    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD are required to seed an admin user.");
-  }
 
   if (password.length < 12) {
     throw new Error("ADMIN_PASSWORD must be at least 12 characters long.");
@@ -353,6 +349,9 @@ async function main() {
   });
 
   console.log(`Seeded ${categories.length} categories and ${seedProducts.length} mock products with local images.`);
+  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+    console.log("Seed admin login: admin@saba.local / SeedAdmin123!");
+  }
   console.log("Seed buyer login: buyer@saba.local / SeedPassword123!");
   console.log("Seed designer login: designer@saba.local / SeedPassword123!");
 }

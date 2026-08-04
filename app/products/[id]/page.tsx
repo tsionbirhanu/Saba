@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -9,6 +10,29 @@ import { VerifiedDesignerBadge } from "@/components/verified-designer-badge";
 import { getProduct, getProducts, getReviews } from "@/lib/api-client";
 import { ProductActions } from "./product-actions";
 import { ProductReviewForm } from "./product-review-form";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProduct(id).catch(() => null);
+
+  if (!product) {
+    return {
+      title: "Product not found",
+      description: "This Saba product could not be found.",
+    };
+  }
+
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      type: "website",
+      images: product.image ? [{ url: product.image, alt: product.name }] : [],
+    },
+  };
+}
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

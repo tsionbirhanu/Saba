@@ -9,8 +9,11 @@ import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [userType, setUserType] = useState<"BUYER" | "DESIGNER" | null>(null)
+  const startsAsDesigner =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("role")?.toUpperCase() === "DESIGNER"
+  const [step, setStep] = useState(startsAsDesigner ? 2 : 1)
+  const [userType, setUserType] = useState<"BUYER" | "DESIGNER" | null>(startsAsDesigner ? "DESIGNER" : null)
   const [formData, setFormData] = useState({
     email: "",
     password: "",

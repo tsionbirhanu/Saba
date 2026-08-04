@@ -66,6 +66,10 @@ export type ApiUser = {
     portfolio?: string | null;
     socialLinks?: string | null;
     contactInfo?: string | null;
+    nationalId?: string | null;
+    idImage?: string | null;
+    isVerified?: boolean;
+    verifiedAt?: string | null;
   } | null;
 };
 
@@ -428,6 +432,19 @@ export function uploadProductImage(file: File) {
     method: "POST",
     body: formData,
   });
+}
+
+export function uploadDesignerId(userId: string, data: { nationalId: string; file: File }) {
+  const formData = new FormData();
+  formData.set("nationalId", data.nationalId);
+  formData.set("file", data.file);
+  return apiRequest<{ message: string; profile: ApiUser["designerProfile"] }>(
+    `/api/designers/${userId}/upload_id`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
 }
 
 export function getConversations() {

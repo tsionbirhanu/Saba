@@ -1,135 +1,76 @@
-"use client"
+import Link from "next/link";
+import Image from "next/image";
+import { CheckCircle2, ShieldCheck, Store } from "lucide-react";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
 
-import { useState } from "react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
-
-export default function SellerProfileSetupPage() {
-  const [step, setStep] = useState(1)
-
-  const nextStep = () => {
-    if (step < 3) setStep(step + 1)
-  }
-
-  const prevStep = () => {
-    if (step > 1) setStep(step - 1)
-  }
-
+export default function SellerEntryPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
-        {/* --- Welcome Section --- */}
-        <section className="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-10 mb-16">
-          {/* Left side: text overlay on image */}
-          <div className="relative w-full md:w-1/2">
-            <div className="bg-gray-200 rounded-2xl h-72 flex items-center justify-center overflow-hidden">
-              {/* Replace this div with your <img src="..." /> */}
-              <p className="text-gray-500 italic"><img src="/images/tilet3.png" /> </p>
-            </div>
-
-            {/* Overlay text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 rounded-2xl text-white text-center p-6">
-              <h1 className="text-3xl font-bold mb-2">Welcome!</h1>
-              <p className="text-lg font-light">Let’s set up your profile</p>
+      <main className="min-h-screen bg-gray-50">
+        <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="relative min-h-[420px] rounded-lg overflow-hidden bg-gray-100">
+            <Image src="/images/tilet3.png" alt="Saba seller onboarding" fill className="object-cover" priority />
+            <div className="absolute inset-0 bg-black/35 flex items-end">
+              <div className="p-8 text-white">
+                <p className="text-sm font-semibold uppercase tracking-wide mb-2">Sell on Saba</p>
+                <h1 className="text-4xl font-bold mb-3">Create your shop, then get verified.</h1>
+                <p className="text-white/90">
+                  Register normally, prepare your profile and products, then submit National ID for admin approval.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Right side: Step Progress Indicator */}
-          <div className="w-full md:w-1/2 flex flex-col items-center">
-            <div className="flex items-center justify-between w-full max-w-sm mb-10">
-              {[1, 2, 3].map((num) => (
-                <div key={num} className="flex flex-col items-center">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                      step >= num
-                        ? "bg-primary border-primary text-white"
-                        : "border-gray-300 text-gray-400"
-                    }`}
-                  >
-                    {step > num ? <Check className="w-5 h-5" /> : num}
-                  </div>
-                  {num < 3 && (
-                    <div
-                      className={`h-1 w-16 md:w-20 transition-all duration-300 ${
-                        step > num ? "bg-primary" : "bg-gray-300"
-                      }`}
-                    />
-                  )}
+          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                <Store className="w-6 h-6" />
+              </span>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Seller access</h2>
+                <p className="text-gray-600 text-sm">The safe marketplace flow for designers.</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              {[
+                "Create a normal seller account with email and password.",
+                "Complete your designer profile and upload National ID in the dashboard.",
+                "Admin approval unlocks public product listings and the verified badge.",
+              ].map((item) => (
+                <div key={item} className="flex gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
+                  <p className="text-sm text-gray-700">{item}</p>
                 </div>
               ))}
             </div>
 
-            {/* Step Cards */}
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md transition-all duration-500">
-              {step === 1 && (
-                <div className="text-center">
-                  <h2 className="text-2xl font-semibold mb-4">Step 1: Business Info</h2>
-                  <input
-                    type="text"
-                    placeholder="Business Name"
-                    className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Business Type"
-                    className="w-full mb-6 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <Button className="w-full" onClick={nextStep}>
-                    Next
-                  </Button>
-                </div>
-              )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link href="/register?role=DESIGNER">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                  Register as seller
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button variant="outline" className="w-full bg-transparent">
+                  Seller login
+                </Button>
+              </Link>
+            </div>
 
-              {step === 2 && (
-                <div className="text-center">
-                  <h2 className="text-2xl font-semibold mb-4">Step 2: Contact Details</h2>
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    className="w-full mb-6 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <div className="flex justify-between">
-                    <Button variant="outline" onClick={prevStep}>
-                      Back
-                    </Button>
-                    <Button onClick={nextStep}>Next</Button>
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="text-center">
-                  <h2 className="text-2xl font-semibold mb-4">Step 3: Verification</h2>
-                  <input
-                    type="text"
-                    placeholder="National ID"
-                    className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <input
-                    type="file"
-                    className="w-full mb-6 border border-gray-300 rounded-lg py-2 px-2 text-sm"
-                  />
-                  <div className="flex justify-between">
-                    <Button variant="outline" onClick={prevStep}>
-                      Back
-                    </Button>
-                    <Button>Finish Setup</Button>
-                  </div>
-                </div>
-              )}
+            <div className="mt-6 rounded-lg bg-amber-50 border border-amber-100 p-4 flex gap-3">
+              <ShieldCheck className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
+              <p className="text-sm text-amber-900">
+                Products from unverified sellers stay hidden from buyers until admin approval.
+              </p>
             </div>
           </div>
         </section>
       </main>
       <Footer />
     </>
-  )
+  );
 }
