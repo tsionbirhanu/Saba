@@ -2,6 +2,40 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 
+export async function GET(req: Request) {
+  try {
+    const auth = requireAuth(req);
+    if (auth.response) return auth.response;
+
+    const favorites = await prisma.favorite.findMany({
+      where: { userId: auth.user.id },
+      include: {
+        product: {
+          include: {
+            category: { select: { id: true, name: true } },
+            designerProfile: {
+              select: {
+                id: true,
+                userId: true,
+                user: {
+                  select: { id: true, name: true, email: true, profileImage: true },
+                },
+              },
+            },
+            _count: { select: { favorites: true, orders: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(favorites);
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return NextResponse.json({ error: "Failed to fetch favorites" }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const auth = requireAuth(req);

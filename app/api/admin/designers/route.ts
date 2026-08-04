@@ -17,9 +17,19 @@ export async function GET(req: Request) {
         portfolio: true,
         socialLinks: true,
         contactInfo: true,
+        nationalId: true,
+        idImage: true,
         isVerified: true,
         verifiedAt: true,
         createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profileImage: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });

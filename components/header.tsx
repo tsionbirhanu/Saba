@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, ShoppingBag, User, Heart, ShoppingCart, Search, ChevronDown } from "lucide-react"
+import { Menu, X, User, Heart, ShoppingCart, Search, ChevronDown, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { ApiNotification, getCart, getGuestCart, getNotifications, markNotificationsRead } from "@/lib/api-client"
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -20,37 +21,94 @@ export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
   const [userRole, setUserRole] = useState("")
+  const [cartCount, setCartCount] = useState(0)
+  const [notifications, setNotifications] = useState<ApiNotification[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem("token")
-    const userStr = localStorage.getItem("user")
-    
-    if (token && userStr) {
-      setIsLoggedIn(true)
-      try {
-        const userData = JSON.parse(userStr)
-        setUserName(userData.name || userData.email || "User")
-        setUserRole(userData.role || "CUSTOMER")
-      } catch (error) {
-        console.error("Error parsing user data:", error)
+    function refreshAuthState() {
+      const token = localStorage.getItem("token")
+      const userStr = localStorage.getItem("user")
+
+      if (token && userStr) {
+        setIsLoggedIn(true)
+        try {
+          const userData = JSON.parse(userStr)
+          setUserName(userData.name || userData.email || "User")
+          setUserRole(userData.role || "CUSTOMER")
+        } catch (error) {
+          console.error("Error parsing user data:", error)
+        }
+      } else {
+        setIsLoggedIn(false)
+        setUserName("")
+        setUserRole("")
       }
-    } else {
-      setIsLoggedIn(false)
-      setUserName("")
-      setUserRole("")
     }
+
+    queueMicrotask(refreshAuthState)
   }, [])
+
+  useEffect(() => {
+    async function loadCartCount() {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        setCartCount(getGuestCart().reduce((sum, item) => sum + item.quantity, 0))
+        return
+      }
+
+      try {
+        const response = await getCart()
+        setCartCount(response.itemCount)
+      } catch {
+        setCartCount(0)
+      }
+    }
+
+    loadCartCount()
+    window.addEventListener("guest-cart-updated", loadCartCount)
+    window.addEventListener("cart-updated", loadCartCount)
+
+    return () => {
+      window.removeEventListener("guest-cart-updated", loadCartCount)
+      window.removeEventListener("cart-updated", loadCartCount)
+    }
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    async function loadNotifications() {
+      if (!localStorage.getItem("token")) {
+        setNotifications([])
+        setUnreadCount(0)
+        return
+      }
+
+      try {
+        const response = await getNotifications()
+        setNotifications(response.notifications)
+        setUnreadCount(response.unreadCount)
+      } catch {
+        setNotifications([])
+        setUnreadCount(0)
+      }
+    }
+
+    loadNotifications()
+    const timer = window.setInterval(loadNotifications, 60000)
+    return () => window.clearInterval(timer)
+  }, [isLoggedIn])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
     localStorage.removeItem("email")
-    localStorage.removeItem("walletAddress")
+    document.cookie = "token=; path=/; max-age=0; SameSite=Lax"
     setIsLoggedIn(false)
     setUserName("")
     setUserRole("")
+    setCartCount(getGuestCart().reduce((sum, item) => sum + item.quantity, 0))
     router.push("/")
   }
 
@@ -59,6 +117,22 @@ export function Header() {
       router.push("/seller/dashboard")
     } else {
       router.push("/profile")
+    }
+  }
+
+  async function handleNotificationClick(notification: ApiNotification) {
+    try {
+      await markNotificationsRead(notification.id)
+      setNotifications((items) =>
+        items.map((item) => (item.id === notification.id ? { ...item, read: true, readAt: new Date().toISOString() } : item))
+      )
+      setUnreadCount((count) => Math.max(0, count - 1))
+    } catch {
+    }
+
+    if (notification.link) {
+      router.push(notification.link)
+      setIsNotificationsOpen(false)
     }
   }
 
@@ -103,12 +177,73 @@ export function Header() {
                   1
                 </span>
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition relative">
+              <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition relative" aria-label="Cart">
                 <ShoppingCart className="w-5 h-5 text-gray-700" />
-                <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-xs rounded-full flex items-center justify-center">
-                  1
-                </span>
-              </button>
+                {cartCount > 0 && (
+                  <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-primary text-white text-[10px] rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+              {isLoggedIn && (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition relative"
+                    aria-label="Notifications"
+                  >
+                    <Bell className="w-5 h-5 text-gray-700" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-primary text-white text-[10px] rounded-full flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {isNotificationsOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
+                      <div className="flex items-center justify-between px-4 py-3 border-b">
+                        <p className="font-semibold text-gray-900">Notifications</p>
+                        {unreadCount > 0 && (
+                          <button
+                            onClick={async () => {
+                              await markNotificationsRead()
+                              setNotifications((items) => items.map((item) => ({ ...item, read: true, readAt: new Date().toISOString() })))
+                              setUnreadCount(0)
+                            }}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <p className="px-4 py-6 text-sm text-gray-600 text-center">No notifications yet.</p>
+                        ) : (
+                          notifications.map((notification) => (
+                            <button
+                              key={notification.id}
+                              onClick={() => handleNotificationClick(notification)}
+                              className={`w-full text-left px-4 py-3 border-b last:border-b-0 hover:bg-gray-50 ${
+                                notification.read || notification.readAt ? "bg-white" : "bg-primary/5"
+                              }`}
+                            >
+                              <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+                              <p className="text-xs text-gray-600 line-clamp-2">
+                                {notification.message || notification.body}
+                              </p>
+                              <p className="text-[11px] text-gray-400 mt-1">
+                                {new Date(notification.createdAt).toLocaleDateString()}
+                              </p>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Conditional buttons based on login status */}
               {isLoggedIn ? (

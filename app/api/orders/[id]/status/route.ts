@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { notificationEmail, notifyUser } from "@/lib/notifications";
+import { notifyOrderDesigners } from "@/lib/orders";
 
 const VALID_STATUSES = new Set(["PENDING", "PAID", "DELIVERED", "CANCELLED"]);
 
@@ -26,6 +28,13 @@ export async function PUT(
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: {
+        items: {
+          include: {
+            designerProfile: {
+              select: { userId: true },
+            },
+          },
+        },
         product: {
           include: {
             designerProfile: {
@@ -33,6 +42,7 @@ export async function PUT(
             },
           },
         },
+        buyer: true,
       },
     });
 
@@ -42,10 +52,24 @@ export async function PUT(
 
     const isAdmin = auth.user.role === "ADMIN";
     const isBuyer = order.buyerId === auth.user.id;
-    const isDesigner = order.product.designerProfile.userId === auth.user.id;
+    const isDesigner =
+      order.product.designerProfile.userId === auth.user.id ||
+      order.items.some((item) => item.designerProfile.userId === auth.user.id);
 
     if (!isAdmin && !isBuyer && !isDesigner) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (status === "DELIVERED" && !isAdmin && !isDesigner) {
+      return NextResponse.json({ error: "Only the seller can mark an order delivered" }, { status: 403 });
+    }
+
+    if (status === "CANCELLED" && !isAdmin && !isBuyer) {
+      return NextResponse.json({ error: "Only the buyer can cancel an order" }, { status: 403 });
+    }
+
+    if (status === "PAID" && !isAdmin) {
+      return NextResponse.json({ error: "Payments must be confirmed by the payment provider" }, { status: 403 });
     }
 
     // Update the order status
@@ -53,6 +77,28 @@ export async function PUT(
       where: { id: orderId },
       data: { status },
     });
+
+    if (status === "DELIVERED" && order.status !== "DELIVERED") {
+      await notifyUser({
+        userId: order.buyerId,
+        type: "ORDER_DELIVERED",
+        title: "Order delivered",
+        message: "Your order has been marked as delivered.",
+        link: "/buyer-dashboard",
+        email: {
+          to: order.buyer.email,
+          subject: "Your Saba order was delivered",
+          html: notificationEmail("Order delivered", "Your order has been marked as delivered.", "/buyer-dashboard"),
+        },
+      });
+
+      await notifyOrderDesigners(
+        order.id,
+        "Order delivered",
+        `Order ${order.id} was marked as delivered.`,
+        "ORDER_DELIVERED"
+      );
+    }
 
     return NextResponse.json({ order: updatedOrder });
   } catch (error) {

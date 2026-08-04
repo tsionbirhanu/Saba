@@ -18,9 +18,6 @@ export async function GET(req: Request) {
         profileImage: true,
         createdAt: true,
         updatedAt: true,
-        cardanoAddress: true,
-        walletVerified: true,
-        walletConnectedAt: true,
         designerProfile: true,
       },
     });

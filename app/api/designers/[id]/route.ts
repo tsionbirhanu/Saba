@@ -1,7 +1,8 @@
 // app/api/designers/[id]/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import { requireAuth } from "@/lib/auth";
+import { getOptionalAuthUser, requireAuth } from "@/lib/auth";
+import { getDesignerReviewSummary } from "@/lib/reviews";
 
 export async function GET(
   req: NextRequest,
@@ -9,6 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params; // unwrap the promise
+    const authUser = getOptionalAuthUser(req);
 
     if (!id) {
       return NextResponse.json({ error: "Designer ID is required" }, { status: 400 });
@@ -30,7 +32,16 @@ export async function GET(
       return NextResponse.json({ error: "Designer not found" }, { status: 404 });
     }
 
-    return NextResponse.json(designer);
+    if (!designer.isVerified && designer.userId !== authUser?.id && authUser?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Designer not found" }, { status: 404 });
+    }
+
+    const reviewSummary = await getDesignerReviewSummary(designer.id);
+
+    return NextResponse.json({
+      ...designer,
+      reviewSummary,
+    });
   } catch (error) {
     console.error("Error fetching designer:", error);
     return NextResponse.json({ error: "Failed to fetch designer" }, { status: 500 });

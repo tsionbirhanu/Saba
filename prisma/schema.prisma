@@ -20,20 +20,6 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum AuthMethod {
-  PASSWORD
-  CARDANO
-}
-
-enum WalletProvider {
-  NAMI
-  ETERNL
-  LACE
-  FLINT
-  OTHER
-}
-
-
 model User {
   id              String   @id @default(uuid())
   name            String
@@ -46,14 +32,12 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  // Cardano auth (SELLERS)
-  cardanoAddress  String?  @unique
-  walletNonce     String?
-  walletVerified  Boolean  @default(false)
-  walletConnectedAt DateTime? 
-
   designerProfile DesignerProfile?
   orders          Order[]
+  cart            Cart?
+  notifications   Notification[]
+  reviews         Review[]
+  aiUsage         AiUsage[]
   messagesSent    Message[] @relation("SentMessages")
   messagesReceived Message[] @relation("ReceivedMessages")
   favorites       Favorite[]
@@ -75,16 +59,11 @@ model DesignerProfile {
   idImage         String?
   isVerified      Boolean  @default(false)
   verifiedAt      DateTime?
-  
-  
-  walletAddress   String?  
-  walletVerified  Boolean  @default(false)
-  walletVerifiedAt DateTime?
-  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   products        Product[]
+  orderItems      OrderItem[]
 }
 
 model Category {
@@ -112,8 +91,26 @@ model Product {
   category           Category         @relation(fields: [categoryId], references: [id])
 
   orders             Order[]
+  orderItems         OrderItem[]
+  cartItems          CartItem[]
   favorites          Favorite[]
+  reviews            Review[]
 
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
 }
 
 model Order {
@@ -123,12 +120,76 @@ model Order {
   quantity     Int          @default(1)
   totalAmount  Float
   status       OrderStatus  @default(PENDING)
+  paymentProvider String?
   paymentRef   String?      // Chapa or Stripe transaction ref
+  chapaCheckoutUrl String?
   paidAt       DateTime?
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  shippingAddress String?
+  shippingCity String?
+  shippingNotes String?
   createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now()) @updatedAt
 
   product      Product      @relation(fields: [productId], references: [id])
   buyer        User         @relation(fields: [buyerId], references: [id])
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id                String          @id @default(uuid())
+  orderId           String
+  productId         String
+  designerProfileId String
+  quantity          Int             @default(1)
+  unitPrice         Float
+  totalAmount       Float
+  createdAt         DateTime        @default(now())
+
+  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product           Product         @relation(fields: [productId], references: [id])
+  designerProfile   DesignerProfile @relation(fields: [designerProfileId], references: [id])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String    @default("GENERAL")
+  title     String
+  body      String
+  message   String    @default("")
+  read      Boolean   @default(false)
+  readAt    DateTime?
+  link      String?
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Favorite {
@@ -151,4 +212,20 @@ model Message {
 
   sender     User     @relation("SentMessages", fields: [senderId], references: [id])
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model AiUsage {
+  id        String   @id @default(uuid())
+  userId    String?
+  feature   String
+  provider  String   @default("gemini")
+  model     String
+  promptTokens Int?
+  completionTokens Int?
+  totalTokens Int?
+  success   Boolean  @default(true)
+  error     String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

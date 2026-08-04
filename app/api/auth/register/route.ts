@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { getClientIp, rateLimit } from "@/lib/rate-limit"
 import { getErrorCode, getErrorDetails } from "@/lib/errors"
+import type { Prisma } from "@prisma/client"
+import { notificationEmail, notifyUser } from "@/lib/notifications"
 
 const SALT_ROUNDS = 10
 const PUBLIC_ROLES = new Set(["BUYER", "DESIGNER"])
@@ -71,21 +73,16 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
 
     const isDesigner = role === "DESIGNER"
-    const userData = {
+    const userData: Prisma.UserCreateInput = {
       name,
       email: normalizedEmail,
       password: hashedPassword,
       role: isDesigner ? "DESIGNER" : "BUYER",
-      walletVerified: false,
-      cardanoAddress: null,
-      walletNonce: null,
       ...(isDesigner
         ? {
             designerProfile: {
               create: {
                 isVerified: false,
-                walletAddress: null,
-                walletVerified: false,
               },
             },
           }
@@ -103,11 +100,32 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.create({
       data: userData,
       include: {
-        designerProfile: isDesigner
+        designerProfile: true
       }
     })
 
     console.log("User created successfully:", user.id)
+
+    await notifyUser({
+      userId: user.id,
+      type: "ACCOUNT_REGISTERED",
+      title: "Welcome to Saba",
+      message: isDesigner
+        ? "Your designer account was created. You can prepare products while waiting for admin verification."
+        : "Your buyer account was created successfully. Welcome to Saba Marketplace.",
+      link: isDesigner ? "/seller-dashboard" : "/shop",
+      email: {
+        to: user.email,
+        subject: "Welcome to Saba Marketplace",
+        html: notificationEmail(
+          "Welcome to Saba Marketplace",
+          isDesigner
+            ? "Your designer account was created. You can prepare products while waiting for admin verification."
+            : "Your buyer account was created successfully. Welcome to Saba Marketplace.",
+          isDesigner ? "/seller-dashboard" : "/shop"
+        ),
+      },
+    })
 
     const userWithoutPassword = {
       id: user.id,
@@ -118,9 +136,6 @@ export async function POST(req: NextRequest) {
       profileImage: user.profileImage,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      cardanoAddress: user.cardanoAddress,
-      walletVerified: user.walletVerified,
-      walletConnectedAt: user.walletConnectedAt,
       designerProfile: user.designerProfile,
     }
 

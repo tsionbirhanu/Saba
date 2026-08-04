@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Notification" ADD COLUMN     "link" TEXT,
+ADD COLUMN     "message" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "read" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "type" TEXT NOT NULL DEFAULT 'GENERAL';

@@ -1,22 +1,17 @@
 import type { NextConfig } from "next";
-import type webpack from 'webpack'; 
 
 const nextConfig: NextConfig = {
- 
-
-  webpack: (config: webpack.Configuration, { isServer, defaultLoaders }) => {
-    
-    if (isServer) {
-        
-        config.target = 'node'; 
-        
-        config.externals = [
-            ...(config.externals || []),
-            "@emurgo/cardano-serialization-lib-nodejs" 
-        ];
-    }
-    
-    return config;
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "http",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
 };
 

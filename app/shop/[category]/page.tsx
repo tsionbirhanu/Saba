@@ -1,12 +1,12 @@
-"use client"
-
-import { use, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Heart, ChevronDown, Grid, List } from "lucide-react"
-import { getProductsByCategory } from "@/lib/products-data"
+import Link from "next/link";
+import Image from "next/image";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { RatingSummary } from "@/components/rating-summary";
+import { AiStyleAssistant } from "@/components/ai-style-assistant";
+import { VerifiedDesignerBadge } from "@/components/verified-designer-badge";
+import { Heart, ChevronDown, Grid, List, Search } from "lucide-react";
+import { getProducts, smartSearchProducts } from "@/lib/api-client";
 
 const categoryData = {
   "women-clothes": {
@@ -27,20 +27,65 @@ const categoryData = {
     name: "Jewelry",
     description: "Handcrafted jewelry pieces from local artisans, each piece tells a unique story of craftsmanship",
   },
+};
+
+type CategoryPageProps = {
+  params: Promise<{ category: string }>;
+  searchParams: Promise<{
+    sort?: string;
+    view?: string;
+    page?: string;
+    search?: string;
+    minPrice?: string;
+    maxPrice?: string;
+  }>;
+};
+
+function buildHref(category: string, params: Record<string, string | undefined>) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) searchParams.set(key, value);
+  });
+  const query = searchParams.toString();
+  return query ? `/shop/${category}?${query}` : `/shop/${category}`;
 }
 
-export default function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  const { category: categoryKey } = use(params)
-  const [viewMode, setViewMode] = useState("grid")
-  const [sortBy, setSortBy] = useState("newest")
-  const [currentPage, setCurrentPage] = useState(1)
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const { category: categoryKey } = await params;
+  const query = await searchParams;
+  const category = categoryData[categoryKey as keyof typeof categoryData] || categoryData["women-clothes"];
+  const sortBy = query.sort || "newest";
+  const viewMode = query.view || "grid";
+  const currentPage = Number(query.page || "1");
+  const itemsPerPage = 12;
 
-  const products = getProductsByCategory(categoryKey)
-  const category = categoryData[categoryKey as keyof typeof categoryData] || categoryData["women-clothes"]
+  const products = query.search
+    ? await smartSearchProducts({
+        q: query.search,
+        category: categoryKey,
+        sort: sortBy,
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+      })
+        .then((response) => response.products)
+        .catch(() =>
+          getProducts({
+            category: categoryKey,
+            sort: sortBy,
+            search: query.search,
+            minPrice: query.minPrice,
+            maxPrice: query.maxPrice,
+          }).catch(() => [])
+        )
+    : await getProducts({
+        category: categoryKey,
+        sort: sortBy,
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+      }).catch(() => []);
 
-  const itemsPerPage = 12
-  const totalPages = Math.ceil(products.length / itemsPerPage)
-  const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const totalPages = Math.max(1, Math.ceil(products.length / itemsPerPage));
+  const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <>
@@ -55,146 +100,170 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg p-6 sticky top-20">
+              <form action={`/shop/${categoryKey}`} className="bg-white rounded-lg p-6 sticky top-20">
+                <input type="hidden" name="sort" value={sortBy} />
+                <input type="hidden" name="view" value={viewMode} />
                 <h3 className="font-bold text-gray-900 mb-4">Filters</h3>
 
-                {/* Price Filter */}
+                <div className="mb-6 pb-6 border-b">
+                  <h4 className="font-medium text-gray-900 mb-3">Search</h4>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                    <input
+                      name="search"
+                      defaultValue={query.search || ""}
+                      placeholder="Search products..."
+                      className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 mb-3">Price Range</h4>
-                  <input type="range" min="0" max="100" className="w-full" />
                   <div className="flex gap-2 mt-4">
-                    <input type="number" placeholder="Min" className="w-1/2 px-3 py-2 border rounded-lg text-sm" />
-                    <input type="number" placeholder="Max" className="w-1/2 px-3 py-2 border rounded-lg text-sm" />
+                    <input
+                      type="number"
+                      name="minPrice"
+                      defaultValue={query.minPrice || ""}
+                      placeholder="Min"
+                      className="w-1/2 px-3 py-2 border rounded-lg text-sm"
+                    />
+                    <input
+                      type="number"
+                      name="maxPrice"
+                      defaultValue={query.maxPrice || ""}
+                      placeholder="Max"
+                      className="w-1/2 px-3 py-2 border rounded-lg text-sm"
+                    />
                   </div>
                 </div>
 
-                {/* Color Filter */}
-                <div className="mb-6 pb-6 border-b">
-                  <h4 className="font-medium text-gray-900 mb-3">Colors</h4>
-                  <div className="space-y-2">
-                    {["Red", "Blue", "Green", "Black", "White"].map((color) => (
-                      <label key={color} className="flex items-center gap-2">
-                        <input type="checkbox" className="w-4 h-4 rounded" />
-                        <span className="text-sm text-gray-600">{color}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Rating Filter */}
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Rating</h4>
-                  <div className="space-y-2">
-                    {[5, 4, 3, 2, 1].map((rating) => (
-                      <label key={rating} className="flex items-center gap-2">
-                        <input type="checkbox" className="w-4 h-4 rounded" />
-                        <span className="text-sm text-gray-600">{"★".repeat(rating)} & up</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                <button className="w-full px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">
+                  Apply Filters
+                </button>
+              </form>
             </div>
 
-            {/* Products */}
             <div className="lg:col-span-3">
-              {/* Toolbar */}
+              <div className="mb-6">
+                <AiStyleAssistant />
+              </div>
+
               <div className="bg-white rounded-lg p-4 mb-6 flex items-center justify-between">
                 <span className="text-sm text-gray-600">
                   Showing {paginatedProducts.length} of {products.length} products
                 </span>
                 <div className="flex items-center gap-4">
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => setViewMode("grid")}
+                    <Link
+                      href={buildHref(categoryKey, { ...query, view: "grid" })}
                       className={`p-2 rounded ${viewMode === "grid" ? "bg-primary text-white" : "bg-gray-100"}`}
                     >
                       <Grid className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode("list")}
+                    </Link>
+                    <Link
+                      href={buildHref(categoryKey, { ...query, view: "list" })}
                       className={`p-2 rounded ${viewMode === "list" ? "bg-primary text-white" : "bg-gray-100"}`}
                     >
                       <List className="w-5 h-5" />
-                    </button>
+                    </Link>
                   </div>
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="px-4 py-2 border rounded-lg appearance-none pr-8 bg-white"
-                    >
-                      <option value="newest">Newest</option>
-                      <option value="price-low">Price: Low to High</option>
-                      <option value="price-high">Price: High to Low</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-3 w-4 h-4 pointer-events-none text-gray-600" />
-                  </div>
+                  <form action={`/shop/${categoryKey}`} className="flex items-center gap-2">
+                    <input type="hidden" name="view" value={viewMode} />
+                    <input type="hidden" name="search" value={query.search || ""} />
+                    <input type="hidden" name="minPrice" value={query.minPrice || ""} />
+                    <input type="hidden" name="maxPrice" value={query.maxPrice || ""} />
+                    <div className="relative">
+                      <select
+                        name="sort"
+                        defaultValue={sortBy}
+                        className="px-4 py-2 border rounded-lg appearance-none pr-8 bg-white"
+                      >
+                        <option value="newest">Newest</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="popular">Most Popular</option>
+                      </select>
+                      <ChevronDown className="absolute right-2 top-3 w-4 h-4 pointer-events-none text-gray-600" />
+                    </div>
+                    <button className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-100">Apply</button>
+                  </form>
                 </div>
               </div>
 
-              {/* Products Grid */}
-              <div
-                className={`grid gap-6 mb-8 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
-              >
-                {paginatedProducts.map((product) => (
-                  <Link key={product.id} href={`/products/${product.id}`}>
-                    <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition group">
-                      <div className="relative h-48 bg-gray-100 overflow-hidden">
-                        <Image
-                          src={product.image || "/placeholder.jpg"}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition"
-                        />
-                        <button className="absolute top-3 right-3 p-2 bg-white rounded-full hover:bg-gray-100 transition">
-                          <Heart className="w-5 h-5 text-gray-600" />
-                        </button>
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-medium text-gray-900 group-hover:text-primary transition">
-                          {product.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">{product.artisan}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-primary font-bold">Birr {product.price}</span>
-                          <span className="text-gray-400 line-through text-sm">Birr {product.originalPrice}</span>
+              {paginatedProducts.length === 0 ? (
+                <div className="bg-white rounded-lg p-10 text-center">
+                  <h2 className="text-xl font-bold text-gray-900">No products found</h2>
+                  <p className="text-gray-600 mt-2">This category does not have matching products yet.</p>
+                </div>
+              ) : (
+                <div
+                  className={`grid gap-6 mb-8 ${
+                    viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+                  }`}
+                >
+                  {paginatedProducts.map((product) => (
+                    <Link key={product.id} href={`/products/${product.id}`}>
+                      <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition group">
+                        <div className="relative h-48 bg-gray-100 overflow-hidden">
+                          <Image
+                            src={product.image || "/images/dress.jpg"}
+                            alt={product.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition"
+                          />
+                          <span className="absolute top-3 right-3 p-2 bg-white rounded-full hover:bg-gray-100 transition">
+                            <Heart className="w-5 h-5 text-gray-600" />
+                          </span>
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-medium text-gray-900 group-hover:text-primary transition">
+                            {product.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 mt-1 inline-flex items-center gap-1.5">
+                            <span>{product.designerProfile?.user?.name || "Saba Artisan"}</span>
+                            <VerifiedDesignerBadge isVerified={product.designerProfile?.isVerified} />
+                          </p>
+                          <div className="mt-2">
+                            <RatingSummary summary={product.reviewSummary} />
+                          </div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-primary font-bold">Birr {product.price.toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
 
-              {/* Pagination */}
               <div className="flex items-center justify-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                <Link
+                  href={buildHref(categoryKey, { ...query, page: String(Math.max(1, currentPage - 1)) })}
+                  className={`px-4 py-2 border rounded-lg ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
                 >
                   Previous
-                </button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
+                </Link>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <Link
                     key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
+                    href={buildHref(categoryKey, { ...query, page: String(i + 1) })}
                     className={`px-4 py-2 rounded-lg ${
                       currentPage === i + 1 ? "bg-primary text-white" : "border hover:bg-gray-100"
                     }`}
                   >
                     {i + 1}
-                  </button>
+                  </Link>
                 ))}
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                <Link
+                  href={buildHref(categoryKey, { ...query, page: String(Math.min(totalPages, currentPage + 1)) })}
+                  className={`px-4 py-2 border rounded-lg ${
+                    currentPage === totalPages ? "pointer-events-none opacity-50" : ""
+                  }`}
                 >
                   Next
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -202,5 +271,6 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
       </main>
       <Footer />
     </>
-  )
+  );
 }
+

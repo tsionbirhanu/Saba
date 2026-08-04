@@ -75,9 +75,6 @@ export async function POST(req: NextRequest) {
       profileImage: user.profileImage,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      cardanoAddress: user.cardanoAddress,
-      walletVerified: user.walletVerified,
-      walletConnectedAt: user.walletConnectedAt,
       designerProfile: user.designerProfile,
     }
 

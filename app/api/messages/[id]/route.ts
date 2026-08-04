@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { notifyRecentMessage } from "@/lib/notifications";
 
 // GET all messages between logged-in user and the other user
 export async function GET(
@@ -52,6 +53,16 @@ export async function POST(
 
     const message = await prisma.message.create({
       data: { senderId, receiverId, text },
+      include: {
+        sender: { select: { name: true } },
+        receiver: { select: { email: true } },
+      },
+    });
+
+    await notifyRecentMessage({
+      receiverId,
+      receiverEmail: message.receiver.email,
+      senderName: message.sender.name || "A Saba user",
     });
 
     return NextResponse.json(message, { status: 201 });

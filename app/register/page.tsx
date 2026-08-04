@@ -95,7 +95,7 @@ export default function RegisterPage() {
         setStatusMessage(`Registration failed: ${data.error || 'Server error'}`)
         setIsLoading(false)
       }
-    } catch (error) {
+    } catch {
       setStatusMessage("Network error. Please try again.")
       setIsLoading(false)
     }
@@ -162,7 +162,7 @@ export default function RegisterPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-gray-900">I&apos;m a Seller</h3>
-                    <p className="text-gray-600 text-sm mt-1">Sell your designs & connect wallet for payments</p>
+                    <p className="text-gray-600 text-sm mt-1">Sell your designs on Saba</p>
                   </div>
                 </div>
               </button>

@@ -63,3 +63,24 @@ export function requireAuth(req: Request, allowedRoles?: Role[]): AuthResult {
     };
   }
 }
+
+export function getOptionalAuthUser(req: Request): AuthUser | null {
+  const authHeader = req.headers.get("authorization");
+  const [scheme, token] = authHeader?.split(" ") ?? [];
+
+  if (scheme?.toLowerCase() !== "bearer" || !token) {
+    return null;
+  }
+
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as Partial<AuthUser>;
+    if (!decoded.id || !decoded.email || !decoded.role) return null;
+    return {
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+    } as AuthUser;
+  } catch {
+    return null;
+  }
+}
