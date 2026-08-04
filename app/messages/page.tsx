@@ -124,8 +124,8 @@ export default function MessagesPage() {
       <Header />
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Messages</h1>
             <Link href="/buyer-dashboard">
               <Button variant="outline" className="bg-transparent">
                 Back to Dashboard
@@ -135,8 +135,8 @@ export default function MessagesPage() {
 
           {status && <div className="mb-6 rounded-lg bg-white p-4 text-sm text-gray-700 shadow-sm">{status}</div>}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[640px] lg:h-[600px]">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col min-h-80 lg:min-h-0">
               <div className="p-4 border-b">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
@@ -171,7 +171,7 @@ export default function MessagesPage() {
                           className="w-10 h-10 rounded-full"
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-start justify-between gap-2">
                             <h3 className="font-medium text-gray-900">{conversation.user.name}</h3>
                             <span className="text-xs text-gray-500">
                               {formatConversationTime(conversation.lastMessage.timestamp)}
@@ -187,7 +187,7 @@ export default function MessagesPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+            <div className="lg:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col min-h-[520px] lg:min-h-0">
               {selectedUser ? (
                 <>
                   <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
@@ -223,7 +223,7 @@ export default function MessagesPage() {
                         return (
                           <div key={message.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
                             <div
-                              className={`max-w-xs px-4 py-2 rounded-lg ${
+                              className={`max-w-[85%] sm:max-w-xs break-words px-4 py-2 rounded-lg ${
                                 isOwn ? "bg-primary text-white" : "bg-gray-100 text-gray-900"
                               }`}
                             >

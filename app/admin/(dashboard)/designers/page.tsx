@@ -38,7 +38,7 @@ export default function AdminDesignersPage() {
     <>
       <AdminClientGuard />
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">Designers</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Designers</h2>
         <p className="text-gray-600 mt-1">Review seller applications and verification details.</p>
       </div>
 
@@ -47,7 +47,7 @@ export default function AdminDesignersPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {designers.map((designer) => (
           <div key={designer.id} className="bg-white rounded-lg border p-6 shadow-sm">
-            <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{designer.user.name}</h3>
                 <p className="text-sm text-gray-500">{designer.user.email}</p>
@@ -74,7 +74,7 @@ export default function AdminDesignersPage() {
               )}
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button onClick={() => handleVerify(designer.userId, "approve")} className="bg-green-600 hover:bg-green-700 text-white">
                 <Check className="w-4 h-4 mr-2" />
                 Approve

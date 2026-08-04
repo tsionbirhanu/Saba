@@ -55,7 +55,7 @@ export function Hero() {
   }
 
   return (
-    <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[620px] sm:h-screen flex items-center justify-center overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -75,7 +75,7 @@ export function Hero() {
 
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 mt-20 md:mt-28">
         <h1
-          className={`text-4xl md:text-6xl font-bold leading-tight mb-4 animate-fade-in ${slides[currentSlide].textColor}`}
+          className={`text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-4 animate-fade-in ${slides[currentSlide].textColor}`}
         >
           {slides[currentSlide].title}
         </h1>
@@ -86,7 +86,7 @@ export function Hero() {
         </p>
         <Button
           size="lg"
-          className="bg-[#852221] hover:bg-[#b14442] text-black rounded-full px-8 py-6 text-lg font-semibold shadow-lg transition"
+          className="bg-[#852221] hover:bg-[#b14442] text-black rounded-full px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold shadow-lg transition"
         >
           Start Now
         </Button>

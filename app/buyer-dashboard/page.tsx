@@ -94,12 +94,12 @@ export default function BuyerDashboard() {
       <Header />
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Account</h1>
               <p className="text-gray-600 mt-1">Welcome back, {user.name}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Link href="/messages">
                 <Button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white">
                   <MessageSquare className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function BuyerDashboard() {
 
           {status && <div className="mb-6 rounded-lg bg-white p-4 text-sm text-gray-700 shadow-sm">{status}</div>}
 
-          <div className="flex gap-4 mb-8 border-b">
+          <div className="flex gap-4 mb-8 border-b overflow-x-auto">
             {["orders", "wishlist", "profile", "addresses"].map((tab) => (
               <button
                 key={tab}
@@ -139,12 +139,12 @@ export default function BuyerDashboard() {
               ) : (
                 orders.map((order) => (
                   <div key={order.id} className="bg-white rounded-lg p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                       <div>
                         <h3 className="font-bold text-gray-900">{getOrderTitle(order)}</h3>
                         <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="sm:text-right">
                         <p className="font-bold text-gray-900">Birr {order.totalAmount.toLocaleString()}</p>
                         <span
                           className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-1 ${
@@ -161,9 +161,9 @@ export default function BuyerDashboard() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-4 border-t">
                       <span className="text-sm text-gray-600">{getOrderQuantity(order)} item(s)</span>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
                           onClick={() => setStatus(`Order status: ${order.status}`)}
                           variant="outline"
@@ -275,7 +275,7 @@ export default function BuyerDashboard() {
 
           {activeTab === "addresses" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Saved Addresses</h2>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-sm">

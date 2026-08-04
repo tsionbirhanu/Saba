@@ -70,11 +70,11 @@ export function ProductActions({
         </div>
       </div>
 
-      <div className="flex gap-3 mb-3">
+      <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <Button
           onClick={handleAddToCart}
           disabled={isSaving}
-          className="flex-1 bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+          className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
         >
           <ShoppingCart className="w-5 h-5" />
           Add to Cart
@@ -83,14 +83,14 @@ export function ProductActions({
           onClick={handleFavorite}
           disabled={isSaving}
           variant="outline"
-          className="px-6 py-3 rounded-lg border-gray-300 bg-transparent"
+          className="w-full sm:w-auto px-6 py-3 rounded-lg border-gray-300 bg-transparent"
         >
           <Heart className="w-5 h-5" />
         </Button>
         <Button
           onClick={() => navigator.share?.({ title: "Saba product", url: window.location.href })}
           variant="outline"
-          className="px-6 py-3 rounded-lg border-gray-300 bg-transparent"
+          className="w-full sm:w-auto px-6 py-3 rounded-lg border-gray-300 bg-transparent"
         >
           <Share2 className="w-5 h-5" />
         </Button>

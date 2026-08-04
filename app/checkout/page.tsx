@@ -68,7 +68,7 @@ export default function CheckoutPage() {
       <Header />
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 py-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 
           {!cart ? (
             <div className="bg-white rounded-lg p-10 shadow-sm">Loading checkout...</div>
@@ -83,10 +83,10 @@ export default function CheckoutPage() {
                     <h2 className="text-lg font-semibold text-gray-900">Contact and Shipping</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input value={form.contactName} onChange={(event) => setForm({ ...form, contactName: event.target.value })} placeholder="Full name" className="px-4 py-3 border rounded-lg" required />
-                    <input value={form.contactEmail} onChange={(event) => setForm({ ...form, contactEmail: event.target.value })} placeholder="Email" type="email" className="px-4 py-3 border rounded-lg" required />
-                    <input value={form.contactPhone} onChange={(event) => setForm({ ...form, contactPhone: event.target.value })} placeholder="Phone number" className="px-4 py-3 border rounded-lg" required />
-                    <input value={form.shippingCity} onChange={(event) => setForm({ ...form, shippingCity: event.target.value })} placeholder="City" className="px-4 py-3 border rounded-lg" required />
+                    <input value={form.contactName} onChange={(event) => setForm({ ...form, contactName: event.target.value })} placeholder="Full name" className="min-w-0 px-4 py-3 border rounded-lg" required />
+                    <input value={form.contactEmail} onChange={(event) => setForm({ ...form, contactEmail: event.target.value })} placeholder="Email" type="email" className="min-w-0 px-4 py-3 border rounded-lg" required />
+                    <input value={form.contactPhone} onChange={(event) => setForm({ ...form, contactPhone: event.target.value })} placeholder="Phone number" className="min-w-0 px-4 py-3 border rounded-lg" required />
+                    <input value={form.shippingCity} onChange={(event) => setForm({ ...form, shippingCity: event.target.value })} placeholder="City" className="min-w-0 px-4 py-3 border rounded-lg" required />
                     <input value={form.shippingAddress} onChange={(event) => setForm({ ...form, shippingAddress: event.target.value })} placeholder="Shipping address" className="md:col-span-2 px-4 py-3 border rounded-lg" required />
                     <textarea value={form.shippingNotes} onChange={(event) => setForm({ ...form, shippingNotes: event.target.value })} placeholder="Delivery notes" className="md:col-span-2 px-4 py-3 border rounded-lg min-h-24" />
                   </div>

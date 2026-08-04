@@ -114,11 +114,26 @@
 }
 
 @layer base {
+  html {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
   }
 }
 

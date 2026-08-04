@@ -150,11 +150,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <AiStyleAssistant />
               </div>
 
-              <div className="bg-white rounded-lg p-4 mb-6 flex items-center justify-between">
+              <div className="bg-white rounded-lg p-4 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm text-gray-600">
                   Showing {paginatedProducts.length} of {products.length} products
                 </span>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                   <div className="flex gap-2">
                     <Link
                       href={buildHref(categoryKey, { ...query, view: "grid" })}
@@ -169,7 +169,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       <List className="w-5 h-5" />
                     </Link>
                   </div>
-                  <form action={`/shop/${categoryKey}`} className="flex items-center gap-2">
+                  <form action={`/shop/${categoryKey}`} className="flex flex-wrap items-center gap-2">
                     <input type="hidden" name="view" value={viewMode} />
                     <input type="hidden" name="search" value={query.search || ""} />
                     <input type="hidden" name="minPrice" value={query.minPrice || ""} />
@@ -238,7 +238,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </div>
               )}
 
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <Link
                   href={buildHref(categoryKey, { ...query, page: String(Math.max(1, currentPage - 1)) })}
                   className={`px-4 py-2 border rounded-lg ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}

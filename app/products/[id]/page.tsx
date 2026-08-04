@@ -90,7 +90,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
-              <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden h-96 flex items-center justify-center relative">
+              <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden h-72 sm:h-96 flex items-center justify-center relative">
                 <Image src={product.image || "/images/dress.jpg"} alt={product.name} fill className="object-cover" />
               </div>
               <div className="flex gap-2 overflow-x-auto">
@@ -112,7 +112,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
 
               <div className="flex items-center gap-2 mb-4">
                 <RatingSummary summary={reviewResponse.summary} size="md" />
@@ -122,7 +122,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
 
               <div className="mb-6">
-                <span className="text-3xl font-bold text-primary">Birr {product.price.toLocaleString()}</span>
+                <span className="text-2xl sm:text-3xl font-bold text-primary">Birr {product.price.toLocaleString()}</span>
               </div>
 
               <p className="text-gray-600 mb-6">{product.description}</p>

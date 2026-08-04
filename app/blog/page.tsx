@@ -32,7 +32,7 @@ export default function BlogPage() {
 
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Coming Soon</h2>
             <p className="text-lg text-gray-600 mb-8">
-              We're working on bringing you inspiring stories from our artisans, fashion tips, cultural insights, and
+              We&apos;re working on bringing you inspiring stories from our artisans, fashion tips, cultural insights, and
               behind-the-scenes content. Stay tuned for our first blog posts!
             </p>
 
@@ -59,11 +59,11 @@ export default function BlogPage() {
             </div>
 
             <p className="text-gray-600">Subscribe to our newsletter to be notified when we launch our blog</p>
-            <div className="flex gap-2 max-w-md mx-auto mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto mt-6">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="min-w-0 flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <button className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium">
                 Notify Me

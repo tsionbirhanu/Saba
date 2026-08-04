@@ -10,13 +10,13 @@ export default function SellerEntryPage() {
     <>
       <Header />
       <main className="min-h-screen bg-gray-50">
-        <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="relative min-h-[420px] rounded-lg overflow-hidden bg-gray-100">
+        <section className="max-w-6xl mx-auto px-4 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+          <div className="relative min-h-80 sm:min-h-[420px] rounded-lg overflow-hidden bg-gray-100">
             <Image src="/images/tilet3.png" alt="Saba seller onboarding" fill className="object-cover" priority />
             <div className="absolute inset-0 bg-black/35 flex items-end">
               <div className="p-8 text-white">
                 <p className="text-sm font-semibold uppercase tracking-wide mb-2">Sell on Saba</p>
-                <h1 className="text-4xl font-bold mb-3">Create your shop, then get verified.</h1>
+                <h1 className="text-2xl sm:text-4xl font-bold mb-3">Create your shop, then get verified.</h1>
                 <p className="text-white/90">
                   Register normally, prepare your profile and products, then submit National ID for admin approval.
                 </p>
@@ -24,7 +24,7 @@ export default function SellerEntryPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
               <span className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <Store className="w-6 h-6" />

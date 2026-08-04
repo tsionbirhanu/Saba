@@ -282,7 +282,7 @@ export default function SellerDashboard() {
       <main className="min-h-screen bg-gray-50">
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
               </div>
@@ -307,10 +307,10 @@ export default function SellerDashboard() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-8 p-6 bg-gradient-to-r from-[#800020] to-[#a00030] rounded-2xl text-white">
+          <div className="mb-8 p-4 sm:p-6 bg-gradient-to-r from-[#800020] to-[#a00030] rounded-2xl text-white">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold mb-2">Welcome back, {user.name || "Seller"}!</h2>
+                <h2 className="text-xl sm:text-2xl font-bold mb-2">Welcome back, {user.name || "Seller"}!</h2>
                 <p className="opacity-90">
                   {user.designerProfile?.isVerified
                     ? "Your verified shop is publicly visible to buyers."
@@ -336,7 +336,7 @@ export default function SellerDashboard() {
             </div>
           )}
 
-          <div className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-xl max-w-3xl">
+          <div className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-xl max-w-3xl overflow-x-auto">
             {[
               { id: "overview", label: "Overview", icon: BarChart3 },
               { id: "products", label: "Products", icon: Package },
@@ -346,7 +346,7 @@ export default function SellerDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all flex-1 justify-center ${
+                className={`flex min-w-32 items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all flex-1 justify-center ${
                   activeTab === tab.id ? "bg-white text-[#800020] shadow-sm" : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
                 }`}
               >
@@ -495,14 +495,14 @@ export default function SellerDashboard() {
                 ) : (
                   <div className="space-y-3">
                     {orders.map((order) => (
-                      <div key={order.id} className="flex items-center justify-between border rounded-lg p-4">
+                      <div key={order.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border rounded-lg p-4">
                         <div>
                           <p className="font-medium text-gray-900">{getSellerOrderTitle(order, user.id)}</p>
                           <p className="text-sm text-gray-600">
                             {getSellerOrderQuantity(order, user.id)} item(s) by {order.buyer?.name || "Buyer"}
                           </p>
                         </div>
-                        <div className="text-right space-y-2">
+                        <div className="sm:text-right space-y-2">
                           <p className="font-bold text-gray-900">Br {getSellerOrderTotal(order, user.id).toLocaleString()}</p>
                           <p className="text-xs text-gray-500">{order.status}</p>
                           {order.status === "PAID" && (
@@ -627,7 +627,7 @@ function ProductTable({
 }) {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Products</h3>
         <span className="text-sm text-gray-500">{products.length} listed</span>
       </div>

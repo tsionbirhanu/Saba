@@ -114,7 +114,7 @@ export function Header() {
 
   const handleProfileClick = () => {
     if (userRole === "DESIGNER") {
-      router.push("/seller/dashboard")
+      router.push("/seller-dashboard")
     } else {
       router.push("/profile")
     }
@@ -140,15 +140,15 @@ export function Header() {
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 gap-2">
             {/* Logo */}
-            <Link href="/" className="flex items-center ml-4">
+            <Link href="/" className="flex items-center shrink-0 sm:ml-4">
               <Image
                 src="/images/sabba.svg"
                 alt="Saba Text Logo"
                 width={180}
                 height={63}
-                className="h-12 w-auto"
+                className="h-10 w-auto sm:h-12"
                 priority
               />
             </Link>
@@ -167,11 +167,11 @@ export function Header() {
             </nav>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-4 min-w-0">
+              <button className="hidden sm:inline-flex p-2 hover:bg-gray-100 rounded-lg transition">
                 <Search className="w-5 h-5 text-gray-700" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition relative">
+              <button className="hidden sm:inline-flex p-2 hover:bg-gray-100 rounded-lg transition relative">
                 <Heart className="w-5 h-5 text-gray-700" />
                 <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-xs rounded-full flex items-center justify-center">
                   1
@@ -201,7 +201,7 @@ export function Header() {
                   </button>
 
                   {isNotificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
+                    <div className="fixed right-2 left-2 top-16 sm:absolute sm:left-auto sm:top-auto sm:right-0 sm:mt-2 sm:w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
                       <div className="flex items-center justify-between px-4 py-3 border-b">
                         <p className="font-semibold text-gray-900">Notifications</p>
                         {unreadCount > 0 && (

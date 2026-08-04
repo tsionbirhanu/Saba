@@ -93,9 +93,9 @@ export default function CartPage() {
       <Header />
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 py-10">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Shopping Cart</h1>
               <p className="text-gray-600 mt-1">Review your pieces before checkout.</p>
             </div>
             <Link href="/shop">
@@ -120,8 +120,8 @@ export default function CartPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 {items.map((item) => (
-                  <div key={item.productId} className="bg-white rounded-lg p-4 shadow-sm flex gap-4">
-                    <Link href={`/products/${item.productId}`} className="relative w-28 h-28 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                  <div key={item.productId} className="bg-white rounded-lg p-4 shadow-sm flex flex-col sm:flex-row gap-4">
+                    <Link href={`/products/${item.productId}`} className="relative w-full h-48 sm:w-28 sm:h-28 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                       <Image src={item.product.image || "/images/dress.jpg"} alt={item.product.name} fill className="object-cover" />
                     </Link>
                     <div className="flex-1 min-w-0">
@@ -136,7 +136,7 @@ export default function CartPage() {
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
-                      <div className="flex items-center justify-between mt-6">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-6">
                         <div className="flex items-center gap-2">
                           <button onClick={() => changeQuantity(item.productId, item.quantity - 1)} className="w-9 h-9 border rounded-lg flex items-center justify-center">
                             <Minus className="w-4 h-4" />

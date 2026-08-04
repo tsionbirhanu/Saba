@@ -75,7 +75,7 @@ function ProductBand({
                     </div>
                   </div>
 
-                  <div className="relative h-[600px] bg-gray-50 flex items-center justify-center">
+                  <div className="relative h-80 sm:h-[440px] lg:h-[600px] bg-gray-50 flex items-center justify-center">
                     <Image
                       src={heroProduct.image || "/images/dress.jpg"}
                       alt={heroProduct.name}
@@ -91,7 +91,7 @@ function ProductBand({
               {reverse && (
                 <div className="w-full">
                   <div className="text-center lg:text-left mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">{title}</h2>
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 uppercase">{title}</h2>
                     <div className="w-full h-0.5 bg-gray-400 mt-2"></div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow">
@@ -107,7 +107,7 @@ function ProductBand({
               {!reverse && (
                 <>
                   <div className="text-center lg:text-left mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">{title}</h2>
+                    <h2 className="text-2xl md:text-4xl font-bold text-gray-900 uppercase">{title}</h2>
                     <div className="w-full h-0.5 bg-gray-400 mt-2"></div>
                   </div>
 
@@ -127,7 +127,7 @@ function ProductBand({
                       <span className="text-sm">{products.length} items</span>
                     </div>
                   </div>
-                  <div className="relative h-[600px] bg-gray-50 flex items-center justify-center">
+                  <div className="relative h-80 sm:h-[440px] lg:h-[600px] bg-gray-50 flex items-center justify-center">
                     <Image
                       src={heroProduct.image || "/images/dress.jpg"}
                       alt={heroProduct.name}

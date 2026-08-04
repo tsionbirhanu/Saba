@@ -20,14 +20,14 @@ export default function AdminUsersPage() {
     <>
       <AdminClientGuard />
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">Users</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Users</h2>
         <p className="text-gray-600 mt-1">All registered accounts.</p>
       </div>
 
       {error && <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
-      <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-white rounded-lg border shadow-sm overflow-x-auto">
+        <table className="min-w-[720px] w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="px-4 py-3 font-medium">User</th>

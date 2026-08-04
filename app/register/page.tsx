@@ -118,10 +118,10 @@ export default function RegisterPage() {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
-          <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">Join Saba</h1>
+        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-5 sm:p-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-gray-900">Join Saba</h1>
           <p className="text-center text-gray-600 text-sm mb-8">Create your account in 4 simple steps</p>
-          <div className="flex justify-center gap-3 mb-8">
+          <div className="flex justify-center gap-2 sm:gap-3 mb-8">
             {[1, 2, 3, 4].map((num) => (
               <div
                 key={num}
@@ -143,7 +143,7 @@ export default function RegisterPage() {
               <p className="text-center text-gray-700 font-semibold mb-6">How will you use Saba?</p>
               <button
                 onClick={() => { setUserType("BUYER"); handleNext() }}
-                className="w-full p-6 border-2 border-[#800020] rounded-xl hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left"
+                className="w-full p-4 sm:p-6 border-2 border-[#800020] rounded-xl hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
@@ -157,7 +157,7 @@ export default function RegisterPage() {
               </button>
               <button
                 onClick={() => { setUserType("DESIGNER"); handleNext() }}
-                className="w-full p-6 border-2 border-[#800020] rounded-xl hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left"
+                className="w-full p-4 sm:p-6 border-2 border-[#800020] rounded-xl hover:border-[#660018] hover:bg-[#ffe6e6] transition text-left"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
