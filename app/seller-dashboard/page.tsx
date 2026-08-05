@@ -17,19 +17,27 @@ import {
   Package,
   Settings,
   LogOut,
-  Bell,
-  HelpCircle,
+  BadgeCheck,
+  CheckCircle2,
+  Clock,
+  ImagePlus,
+  Sparkles,
+  UploadCloud,
+  X,
 } from "lucide-react";
 import {
+  ApiCategory,
   ApiOrder,
   ApiProduct,
   ApiUser,
   createProduct,
   generateProductDescription,
+  getCategories,
   getLoggedInUser,
   getOrders,
   getProducts,
   suggestImageTags,
+  updateProduct,
   updateOrderStatus,
   uploadDesignerId,
   uploadProductImage,
@@ -39,6 +47,7 @@ type ProductForm = {
   name: string;
   description: string;
   price: string;
+  stock: string;
   categoryId: string;
   file: File | null;
   keywords: string;
@@ -52,7 +61,7 @@ export default function SellerDashboard() {
   const [user, setUser] = useState<ApiUser | null>(null);
   const [products, setProducts] = useState<ApiProduct[]>([]);
   const [orders, setOrders] = useState<ApiOrder[]>([]);
-  const [allProducts, setAllProducts] = useState<ApiProduct[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState("");
@@ -61,16 +70,59 @@ export default function SellerDashboard() {
     file: null,
   });
   const [formStatus, setFormStatus] = useState("");
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ApiProduct | null>(null);
   const [form, setForm] = useState<ProductForm>({
     name: "",
     description: "",
     price: "",
+    stock: "1",
     categoryId: "",
     file: null,
     keywords: "",
     uploadedImageUrl: "",
     suggestedTags: [],
   });
+
+  function resetProductForm() {
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      stock: "1",
+      categoryId: "",
+      file: null,
+      keywords: "",
+      uploadedImageUrl: "",
+      suggestedTags: [],
+    });
+  }
+
+  function openAddProductModal() {
+    setEditingProduct(null);
+    setFormStatus("");
+    resetProductForm();
+    setIsProductModalOpen(true);
+    setActiveTab("products");
+  }
+
+  function openEditProductModal(product: ApiProduct) {
+    setEditingProduct(product);
+    setFormStatus("");
+    setForm({
+      name: product.name,
+      description: product.description,
+      price: String(product.price),
+      stock: String(product.stock),
+      categoryId: product.category.id,
+      file: null,
+      keywords: "",
+      uploadedImageUrl: product.image || "",
+      suggestedTags: [],
+    });
+    setIsProductModalOpen(true);
+    setActiveTab("products");
+  }
 
   const loadDashboard = useCallback(async () => {
     setIsLoading(true);
@@ -83,10 +135,10 @@ export default function SellerDashboard() {
 
       setUser(currentUser);
       const designerProfileId = currentUser.designerProfile?.id;
-      const [productRows, orderResponse, catalogRows] = await Promise.all([
+      const [productRows, orderResponse, categoryRows] = await Promise.all([
         designerProfileId ? getProducts({ designerProfileId }) : Promise.resolve([]),
         getOrders(),
-        getProducts({ sort: "newest" }),
+        getCategories(),
       ]);
 
       setProducts(productRows);
@@ -97,7 +149,7 @@ export default function SellerDashboard() {
             order.items?.some((item) => item.product.designerProfile?.user?.id === currentUser.id)
         )
       );
-      setAllProducts(catalogRows);
+      setCategories(categoryRows);
     } catch {
       router.push("/login");
     } finally {
@@ -108,12 +160,6 @@ export default function SellerDashboard() {
   useEffect(() => {
     loadDashboard();
   }, [loadDashboard]);
-
-  const categories = useMemo(() => {
-    const map = new Map<string, string>();
-    allProducts.forEach((product) => map.set(product.category.id, product.category.name));
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
-  }, [allProducts]);
 
   const stats = useMemo(() => {
     const totalRevenue = orders
@@ -131,43 +177,49 @@ export default function SellerDashboard() {
     ];
   }, [orders, products.length, user?.id]);
 
-  async function handleCreateProduct(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSaveProduct(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setFormStatus("Creating product...");
+    setFormStatus(editingProduct ? "Updating product..." : "Creating product...");
 
     try {
-      if (!form.file) throw new Error("Please choose a product image.");
+      if (!editingProduct && !form.file) throw new Error("Please choose a product image.");
       if (!form.categoryId) throw new Error("Please choose a category.");
+      if (!form.stock || Number(form.stock) < 0) throw new Error("Enter a valid stock quantity.");
 
       let image = form.uploadedImageUrl;
-      if (!image) {
+      if (form.file && !image) {
         const uploaded = await uploadProductImage(form.file);
         image = uploaded.secure_url || uploaded.url || "";
       }
-      if (!image) throw new Error("Image upload did not return a URL.");
+      if (!editingProduct && !image) throw new Error("Image upload did not return a URL.");
 
-      await createProduct({
-        name: form.name,
-        description: form.description,
-        price: form.price,
-        image,
-        categoryId: form.categoryId,
-      });
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, {
+          name: form.name,
+          description: form.description,
+          price: form.price,
+          stock: form.stock,
+          image,
+          categoryId: form.categoryId,
+        });
+      } else {
+        await createProduct({
+          name: form.name,
+          description: form.description,
+          price: form.price,
+          stock: form.stock,
+          image,
+          categoryId: form.categoryId,
+        });
+      }
 
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        categoryId: "",
-        file: null,
-        keywords: "",
-        uploadedImageUrl: "",
-        suggestedTags: [],
-      });
-      setFormStatus("Product added successfully.");
+      resetProductForm();
+      setEditingProduct(null);
+      setIsProductModalOpen(false);
+      setFormStatus(editingProduct ? "Product updated successfully." : "Product added successfully.");
       await loadDashboard();
     } catch (error) {
-      setFormStatus(error instanceof Error ? error.message : "Could not create product.");
+      setFormStatus(error instanceof Error ? error.message : "Could not save product.");
     }
   }
 
@@ -278,48 +330,48 @@ export default function SellerDashboard() {
 
   return (
     <>
-      <Header />
+      <Header showPattern={false} />
       <main className="min-h-screen bg-gray-50">
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
+        <div className="border-b border-gray-200 bg-white">
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Seller Workspace</p>
+                <h1 className="mt-1 text-2xl font-bold text-gray-950 sm:text-3xl">Dashboard</h1>
+                <p className="mt-1 text-sm text-gray-600">
+                  Manage products, orders, verification, and fulfillment from one place.
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition relative">
-                  <Bell className="w-5 h-5 text-gray-600" />
-                </button>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-                  <HelpCircle className="w-5 h-5 text-gray-600" />
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </div>
+              <button
+                onClick={handleLogout}
+                className="inline-flex w-fit items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
             </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-8 p-4 sm:p-6 bg-gradient-to-r from-[#800020] to-[#a00030] rounded-2xl text-white">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="mb-8 rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100 sm:p-6">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold mb-2">Welcome back, {user.name || "Seller"}!</h2>
-                <p className="opacity-90">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  {user.designerProfile?.isVerified ? <BadgeCheck className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
+                  {user.designerProfile?.isVerified ? "Verified seller" : "Verification pending"}
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-950">Welcome back, {user.name || "Seller"}</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600">
                   {user.designerProfile?.isVerified
                     ? "Your verified shop is publicly visible to buyers."
                     : "You can prepare products now. They become public after National ID verification."}
                 </p>
               </div>
               <Button
-                className="bg-white text-[#800020] hover:bg-gray-100 font-semibold"
-                onClick={() => setActiveTab(user.designerProfile?.isVerified ? "products" : "settings")}
+                className="w-full bg-primary text-white hover:bg-primary/90 font-semibold md:w-auto"
+                onClick={() => (user.designerProfile?.isVerified ? openAddProductModal() : setActiveTab("settings"))}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 {user.designerProfile?.isVerified ? "Add New Product" : "Submit Verification"}
@@ -336,7 +388,7 @@ export default function SellerDashboard() {
             </div>
           )}
 
-          <div className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-xl max-w-3xl overflow-x-auto">
+          <div className="mb-8 flex gap-1 overflow-x-auto rounded-xl bg-white p-1 shadow-sm ring-1 ring-gray-100">
             {[
               { id: "overview", label: "Overview", icon: BarChart3 },
               { id: "products", label: "Products", icon: Package },
@@ -347,7 +399,7 @@ export default function SellerDashboard() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex min-w-32 items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all flex-1 justify-center ${
-                  activeTab === tab.id ? "bg-white text-[#800020] shadow-sm" : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                  activeTab === tab.id ? "bg-primary/10 text-primary" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -374,115 +426,23 @@ export default function SellerDashboard() {
                   })}
                 </div>
 
-                <ProductTable products={products.slice(0, 5)} orders={orders} emptyText="No products yet." />
+                <ProductTable products={products.slice(0, 5)} orders={orders} emptyText="No products yet." onEdit={openEditProductModal} />
               </>
             )}
 
             {activeTab === "products" && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <ProductTable products={products} orders={orders} emptyText="Add your first product to start selling." />
-                </div>
-
-                <form onSubmit={handleCreateProduct} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Add Product</h3>
-                  {!user.designerProfile?.isVerified && (
-                    <p className="rounded-lg bg-amber-50 border border-amber-100 p-3 text-sm text-amber-900">
-                      You can save products now, but they stay hidden from buyers until your seller verification is approved.
-                    </p>
-                  )}
-                  <input
-                    value={form.name}
-                    onChange={(event) => setForm({ ...form, name: event.target.value })}
-                    placeholder="Product name"
-                    className="w-full px-4 py-2 border rounded-lg"
-                    required
-                  />
-                  <textarea
-                    value={form.description}
-                    onChange={(event) => setForm({ ...form, description: event.target.value })}
-                    placeholder="Description"
-                    className="w-full px-4 py-2 border rounded-lg min-h-28"
-                    required
-                  />
-                  <input
-                    value={form.keywords}
-                    onChange={(event) => setForm({ ...form, keywords: event.target.value })}
-                    placeholder="Style keywords, fabric, occasion"
-                    className="w-full px-4 py-2 border rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateDescription}
-                    disabled={isAiLoading}
-                    className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-60"
-                  >
-                    {isAiLoading ? "Drafting..." : "Draft Description"}
-                  </button>
-                  <input
-                    value={form.price}
-                    onChange={(event) => setForm({ ...form, price: event.target.value })}
-                    placeholder="Price"
-                    type="number"
-                    min="0"
-                    className="w-full px-4 py-2 border rounded-lg"
-                    required
-                  />
-                  <select
-                    value={form.categoryId}
-                    onChange={(event) => setForm({ ...form, categoryId: event.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg"
-                    required
-                  >
-                    <option value="">Choose category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) =>
-                      setForm({
-                        ...form,
-                        file: event.target.files?.[0] || null,
-                        uploadedImageUrl: "",
-                        suggestedTags: [],
-                      })
-                    }
-                    className="w-full px-4 py-2 border rounded-lg"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSuggestImageTags}
-                    disabled={isAiLoading}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
-                  >
-                    {isAiLoading ? "Analyzing..." : "Analyze Photo"}
-                  </button>
-                  {form.suggestedTags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {form.suggestedTags.map((tag) => (
-                        <span key={tag} className="px-2 py-1 rounded-full bg-gray-100 text-xs text-gray-700">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <Button className="w-full bg-[#800020] hover:bg-[#660018] text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Save Product
+              <div className="space-y-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-950">Products</h2>
+                    <p className="text-sm text-gray-600">Add listings and update names, prices, stock, and categories.</p>
+                  </div>
+                  <Button onClick={openAddProductModal} className="w-full bg-primary text-white hover:bg-primary/90 sm:w-auto">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Product
                   </Button>
-                  {formStatus && <p className="text-sm text-gray-600">{formStatus}</p>}
-                  {categories.length === 0 && (
-                    <p className="text-sm text-red-600">
-                      No categories were found from the catalog yet. Add categories in the database before creating products.
-                    </p>
-                  )}
-                </form>
+                </div>
+                <ProductTable products={products} orders={orders} emptyText="Add your first product to start selling." onEdit={openEditProductModal} />
               </div>
             )}
 
@@ -524,14 +484,15 @@ export default function SellerDashboard() {
 
             {activeTab === "settings" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <section className="bg-white rounded-xl p-6 shadow-sm ring-1 ring-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Designer Verification</h3>
                   <p className="text-sm text-gray-600 mb-5">
                     Submit your National ID after registration. Admin approval adds the verified badge and makes your products visible in the shop.
                   </p>
 
                   <div className="mb-5 rounded-lg bg-gray-50 p-4">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                      {user.designerProfile?.isVerified ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Clock className="h-4 w-4 text-amber-600" />}
                       Status: {user.designerProfile?.isVerified ? "Verified" : user.designerProfile?.idImage ? "Submitted for review" : "Not submitted"}
                     </p>
                     {user.designerProfile?.verifiedAt && (
@@ -573,7 +534,7 @@ export default function SellerDashboard() {
                   {verificationStatus && <p className="mt-4 text-sm text-gray-600">{verificationStatus}</p>}
                 </section>
 
-                <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <section className="bg-white rounded-xl p-6 shadow-sm ring-1 ring-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">How seller approval works</h3>
                   <div className="space-y-3 text-sm text-gray-600">
                     <p>1. Register normally with email and password.</p>
@@ -588,6 +549,207 @@ export default function SellerDashboard() {
           </div>
         </div>
       </main>
+      {isProductModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-5 py-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-950">
+                  {editingProduct ? "Edit Product" : "Add Product"}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {editingProduct
+                    ? "Update product name, price, stock, category, or photo."
+                    : "Create a listing with a real category and product photo."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsProductModalOpen(false);
+                  setEditingProduct(null);
+                  resetProductForm();
+                  setFormStatus("");
+                }}
+                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                aria-label="Close product form"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProduct} className="p-5 sm:p-6">
+              {!user.designerProfile?.isVerified && (
+                <p className="mb-4 rounded-lg border border-amber-100 bg-amber-50 p-3 text-sm text-amber-900">
+                  You can save products now, but they stay hidden from buyers until your seller verification is approved.
+                </p>
+              )}
+
+              <div className="space-y-4">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-gray-800">Product name</span>
+                  <input
+                    value={form.name}
+                    onChange={(event) => setForm({ ...form, name: event.target.value })}
+                    placeholder="Traditional Habesha dress"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    required
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-gray-800">Description</span>
+                  <textarea
+                    value={form.description}
+                    onChange={(event) => setForm({ ...form, description: event.target.value })}
+                    placeholder="Describe fabric, fit, occasion, and handmade details."
+                    className="min-h-28 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    required
+                  />
+                </label>
+
+                {!editingProduct && (
+                  <>
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-medium text-gray-800">Style keywords</span>
+                      <input
+                        value={form.keywords}
+                        onChange={(event) => setForm({ ...form, keywords: event.target.value })}
+                        placeholder="Wedding, cotton, modern, traditional"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleGenerateDescription}
+                      disabled={isAiLoading}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      {isAiLoading ? "Drafting..." : "Draft Description"}
+                    </button>
+                  </>
+                )}
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-gray-800">Price</span>
+                    <input
+                      value={form.price}
+                      onChange={(event) => setForm({ ...form, price: event.target.value })}
+                      placeholder="Birr"
+                      type="number"
+                      min="0"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      required
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-gray-800">Stock</span>
+                    <input
+                      value={form.stock}
+                      onChange={(event) => setForm({ ...form, stock: event.target.value })}
+                      placeholder="1"
+                      type="number"
+                      min="0"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      required
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-gray-800">Category</span>
+                    <select
+                      value={form.categoryId}
+                      onChange={(event) => setForm({ ...form, categoryId: event.target.value })}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      required
+                    >
+                      <option value="">Choose category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center hover:bg-gray-100">
+                  <ImagePlus className="mb-2 h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium text-gray-900">
+                    {form.file ? form.file.name : editingProduct ? "Replace product photo" : "Upload product photo"}
+                  </span>
+                  <span className="mt-1 text-xs text-gray-500">
+                    {editingProduct ? "Optional. Leave empty to keep current image." : "PNG, JPG, or WEBP"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) =>
+                      setForm({
+                        ...form,
+                        file: event.target.files?.[0] || null,
+                        uploadedImageUrl: "",
+                        suggestedTags: [],
+                      })
+                    }
+                    className="sr-only"
+                    required={!editingProduct}
+                  />
+                </label>
+
+                {!editingProduct && (
+                  <button
+                    type="button"
+                    onClick={handleSuggestImageTags}
+                    disabled={isAiLoading}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                  >
+                    <UploadCloud className="h-4 w-4" />
+                    {isAiLoading ? "Analyzing..." : "Analyze Photo"}
+                  </button>
+                )}
+              </div>
+
+              {form.suggestedTags.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {form.suggestedTags.map((tag) => (
+                    <span key={tag} className="px-2 py-1 rounded-full bg-gray-100 text-xs text-gray-700">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {formStatus && <p className="mt-4 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">{formStatus}</p>}
+              {categories.length === 0 && (
+                <p className="mt-3 text-sm text-red-600">
+                  No categories were found. Add categories in the database before creating products.
+                </p>
+              )}
+
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsProductModalOpen(false);
+                    setEditingProduct(null);
+                    resetProductForm();
+                    setFormStatus("");
+                  }}
+                  className="bg-white"
+                >
+                  Cancel
+                </Button>
+                <Button className="bg-primary text-white hover:bg-primary/90">
+                  {editingProduct ? "Save Changes" : "Save Product"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
@@ -620,13 +782,15 @@ function ProductTable({
   products,
   orders,
   emptyText,
+  onEdit,
 }: {
   products: ApiProduct[];
   orders: ApiOrder[];
   emptyText: string;
+  onEdit: (product: ApiProduct) => void;
 }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+    <div className="bg-white rounded-xl p-6 shadow-sm ring-1 ring-gray-100">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Products</h3>
         <span className="text-sm text-gray-500">{products.length} listed</span>
@@ -652,10 +816,14 @@ function ProductTable({
             </thead>
             <tbody>
               {products.map((product) => {
-                const sales = orders
-                  .flatMap((order) => order.items || [])
-                  .filter((item) => item.productId === product.id)
-                  .reduce((sum, item) => sum + item.quantity, 0);
+                const sales = orders.reduce((sum, order) => {
+                  const itemSales =
+                    order.items
+                      ?.filter((item) => item.productId === product.id)
+                      .reduce((itemSum, item) => itemSum + item.quantity, 0) || 0;
+                  const legacySales = order.productId === product.id ? order.quantity : 0;
+                  return sum + itemSales + legacySales;
+                }, 0);
                 return (
                   <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-4">
@@ -684,11 +852,20 @@ function ProductTable({
                     </td>
                     <td className="py-4">
                       <div className="flex gap-2">
-                        <Link href={`/products/${product.id}`} className="p-2 hover:bg-gray-100 rounded-lg">
+                        <Link
+                          href={`/products/${product.id}`}
+                          className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
                           <Eye className="w-4 h-4 text-gray-600" />
+                          Open
                         </Link>
-                        <button className="p-2 hover:bg-gray-100 rounded-lg">
+                        <button
+                          type="button"
+                          onClick={() => onEdit(product)}
+                          className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
                           <Edit2 className="w-4 h-4 text-gray-600" />
+                          Edit
                         </button>
                       </div>
                     </td>

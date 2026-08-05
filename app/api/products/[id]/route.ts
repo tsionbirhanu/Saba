@@ -104,3 +104,76 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
   }
 }
+
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: productId } = await context.params;
+    const auth = requireAuth(req, ["DESIGNER", "ADMIN"]);
+    if (auth.response) return auth.response;
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        designerProfile: {
+          select: { userId: true },
+        },
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    if (auth.user.role !== "ADMIN" && product.designerProfile.userId !== auth.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const name = String(body.name || "").trim();
+    const description = String(body.description || "").trim();
+    const categoryId = String(body.categoryId || "").trim();
+    const price = Number(body.price);
+    const stock = Number(body.stock);
+    const image = body.image ? String(body.image).trim() : undefined;
+
+    if (!name || !description || !categoryId || Number.isNaN(price) || price < 0 || Number.isNaN(stock) || stock < 0) {
+      return NextResponse.json({ error: "Name, description, category, price, and stock are required." }, { status: 400 });
+    }
+
+    const updated = await prisma.product.update({
+      where: { id: productId },
+      data: {
+        name,
+        description,
+        categoryId,
+        price,
+        stock: Math.floor(stock),
+        ...(image ? { image } : {}),
+      },
+      include: {
+        category: true,
+        designerProfile: {
+          include: { user: { select: { id: true, name: true, email: true, profileImage: true } } },
+        },
+        _count: {
+          select: { favorites: true, orders: true, orderItems: true },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      ...updated,
+      image: normalizeProductImage(updated.image),
+      _count: {
+        ...updated._count,
+        orders: updated._count.orderItems,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+  }
+}

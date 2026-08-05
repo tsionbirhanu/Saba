@@ -40,7 +40,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!product) {
     return (
       <>
-        <Header />
+        <Header showPattern={false} />
         <main className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
@@ -72,7 +72,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <Header />
+      <Header showPattern={false} />
       <main className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
           <Link href="/" className="hover:text-primary">
@@ -89,8 +89,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
-              <div className="mb-4 bg-gray-100 rounded-lg overflow-hidden h-72 sm:h-96 flex items-center justify-center relative">
-                <Image src={product.image || "/images/dress.jpg"} alt={product.name} fill className="object-cover" />
+              <div className="mb-4 bg-gray-50 rounded-lg overflow-hidden h-[420px] sm:h-[560px] flex items-center justify-center relative border border-gray-100">
+                <Image
+                  src={product.image || "/images/dress.jpg"}
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-3"
+                />
               </div>
               <div className="flex gap-2 overflow-x-auto">
                 {[product.image].map((img, idx) => (
@@ -243,4 +250,3 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     </>
   );
 }
-

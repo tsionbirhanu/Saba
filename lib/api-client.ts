@@ -29,6 +29,11 @@ export type ApiProduct = {
   reviewSummary?: ApiReviewSummary;
 };
 
+export type ApiCategory = {
+  id: string;
+  name: string;
+};
+
 export type ApiReviewSummary = {
   averageRating: number;
   reviewCount: number;
@@ -309,6 +314,10 @@ export function getProducts(query: Record<string, string | number | undefined> =
   return apiRequest<ApiProduct[]>(`/api/products${suffix}`, { baseUrl });
 }
 
+export function getCategories(baseUrl?: string) {
+  return apiRequest<ApiCategory[]>("/api/categories", { baseUrl });
+}
+
 export function getProduct(id: string, baseUrl?: string) {
   return apiRequest<ApiProduct>(`/api/products/${id}`, { baseUrl });
 }
@@ -418,9 +427,27 @@ export function createProduct(data: {
   price: string | number;
   image: string;
   categoryId: string;
+  stock?: string | number;
 }) {
   return apiRequest<ApiProduct>("/api/products", {
     method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateProduct(
+  id: string,
+  data: {
+    name: string;
+    description: string;
+    price: string | number;
+    stock: string | number;
+    categoryId: string;
+    image?: string;
+  }
+) {
+  return apiRequest<ApiProduct>(`/api/products/${id}`, {
+    method: "PUT",
     body: JSON.stringify(data),
   });
 }

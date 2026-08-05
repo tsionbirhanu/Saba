@@ -15,7 +15,7 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ]
 
-export function Header() {
+export function Header({ showPattern = true }: { showPattern?: boolean } = {}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isShopOpen, setIsShopOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -520,8 +520,9 @@ export function Header() {
         </div>
       </header>
 
-      {/* Orange gradient pattern bar */}
-      <div className="h-6 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400 pattern-geometric"></div>
+      {showPattern && (
+        <div className="h-6 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400 pattern-geometric"></div>
+      )}
     </>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Share2, ShoppingCart } from "lucide-react";
+import { Heart, MessageCircle, Minus, Plus, Share2, ShoppingCart } from "lucide-react";
 import { addCartItem, addFavorite, addGuestCartItem } from "@/lib/api-client";
 
 export function ProductActions({
@@ -49,32 +49,36 @@ export function ProductActions({
 
   return (
     <>
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-900 mb-3">Quantity</label>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="w-10 h-10 border border-gray-300 rounded-lg hover:bg-gray-100"
-            type="button"
-          >
-            -
-          </button>
-          <span className="w-12 text-center font-medium">{quantity}</span>
-          <button
-            onClick={() => setQuantity(quantity + 1)}
-            className="w-10 h-10 border border-gray-300 rounded-lg hover:bg-gray-100"
-            type="button"
-          >
-            +
-          </button>
+      <div className="mb-5 rounded-lg border border-gray-100 bg-gray-50 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <label className="text-sm font-semibold text-gray-900">Quantity</label>
+          <div className="inline-flex w-fit items-center rounded-lg border border-gray-200 bg-white p-1">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="flex h-9 w-9 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100"
+              type="button"
+              aria-label="Decrease quantity"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="w-12 text-center text-sm font-semibold text-gray-900">{quantity}</span>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="flex h-9 w-9 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100"
+              type="button"
+              aria-label="Increase quantity"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-3">
+      <div className="mb-3 grid grid-cols-[1fr_auto_auto] gap-2">
         <Button
           onClick={handleAddToCart}
           disabled={isSaving}
-          className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+          className="h-12 w-full bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold flex items-center justify-center gap-2"
         >
           <ShoppingCart className="w-5 h-5" />
           Add to Cart
@@ -83,26 +87,31 @@ export function ProductActions({
           onClick={handleFavorite}
           disabled={isSaving}
           variant="outline"
-          className="w-full sm:w-auto px-6 py-3 rounded-lg border-gray-300 bg-transparent"
+          className="h-12 w-12 rounded-lg border-gray-300 bg-white p-0"
+          aria-label="Add to favorites"
         >
           <Heart className="w-5 h-5" />
         </Button>
         <Button
           onClick={() => navigator.share?.({ title: "Saba product", url: window.location.href })}
           variant="outline"
-          className="w-full sm:w-auto px-6 py-3 rounded-lg border-gray-300 bg-transparent"
+          className="h-12 w-12 rounded-lg border-gray-300 bg-white p-0"
+          aria-label="Share product"
         >
           <Share2 className="w-5 h-5" />
         </Button>
       </div>
 
-      {status && <p className="mb-6 text-sm text-gray-600">{status}</p>}
-
       {sellerId && (
-        <a href={`/messages?user=${sellerId}`}>
-          <Button className="mb-6 w-full bg-primary hover:bg-primary/90 text-white">Contact Seller</Button>
+        <a href={`/messages?user=${sellerId}`} className="block">
+          <Button variant="outline" className="mb-3 h-11 w-full rounded-lg border-gray-300 bg-white font-semibold">
+            <MessageCircle className="mr-2 h-4 w-4" />
+            Contact Seller
+          </Button>
         </a>
       )}
+
+      {status && <p className="mb-6 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">{status}</p>}
     </>
   );
 }

@@ -135,7 +135,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, description, price, image, categoryId } = await req.json();
+    const { name, description, price, image, categoryId, stock } = await req.json();
 
     if (!name || !description || !price || !image || !categoryId) {
       return NextResponse.json(
@@ -149,6 +149,7 @@ export async function POST(req: Request) {
         name,
         description,
         price: parseFloat(price),
+        stock: stock === undefined || stock === "" ? 1 : Number(stock),
         image,
         designerProfile: { connect: { id: designer.id } },
         category: { connect: { id: categoryId } },

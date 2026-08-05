@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Bot, Loader2, Send, Sparkles, X } from "lucide-react";
+import { Loader2, Send, WandSparkles, X } from "lucide-react";
 import { ApiAiProductPick, askStyleAssistant } from "@/lib/api-client";
 
 type AiStyleAssistantProps = {
@@ -49,11 +49,11 @@ export function AiStyleAssistant({ productId, categoryId }: AiStyleAssistantProp
   return (
     <div className="fixed bottom-5 right-4 z-50 sm:bottom-6 sm:right-6">
       {isOpen && (
-        <section className="mb-3 flex max-h-[min(620px,calc(100vh-120px))] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl">
-          <div className="flex items-center justify-between border-b px-4 py-3">
+        <section className="mb-4 flex max-h-[min(620px,calc(100vh-120px))] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl">
+          <div className="flex items-center justify-between border-b bg-gray-50 px-4 py-3">
             <div className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Bot className="h-5 w-5" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-sm">
+                <WandSparkles className="h-5 w-5" />
               </span>
               <div>
                 <h2 className="font-bold text-gray-900">Style Assistant</h2>
@@ -72,7 +72,7 @@ export function AiStyleAssistant({ productId, categoryId }: AiStyleAssistantProp
 
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
             {picks.length === 0 && !status && (
-              <div className="rounded-lg bg-gray-50 p-4 text-sm text-gray-700">
+              <div className="rounded-lg bg-primary/5 p-4 text-sm text-gray-700">
                 Tell me the occasion, style, size, or budget. I will suggest products that already exist in the catalog.
               </div>
             )}
@@ -89,7 +89,7 @@ export function AiStyleAssistant({ productId, categoryId }: AiStyleAssistantProp
                     key={pick.product.id}
                     href={`/products/${pick.product.id}`}
                     onClick={() => setIsOpen(false)}
-                    className="flex gap-3 rounded-lg border border-gray-100 p-3 hover:border-primary/40 hover:bg-gray-50 transition"
+                    className="flex gap-3 rounded-lg border border-gray-100 p-3 shadow-sm hover:border-primary/40 hover:bg-gray-50 transition"
                   >
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                       <Image
@@ -132,11 +132,11 @@ export function AiStyleAssistant({ productId, categoryId }: AiStyleAssistantProp
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className="ml-auto flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-primary/90"
+        className="ml-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl ring-4 ring-white transition hover:bg-primary/90 hover:scale-105 focus:outline-none focus:ring-primary/20"
         aria-label="Open style assistant"
+        title="Style help"
       >
-        <Sparkles className="h-4 w-4" />
-        Style help
+        {isOpen ? <X className="h-5 w-5" /> : <WandSparkles className="h-6 w-6" />}
       </button>
     </div>
   );
