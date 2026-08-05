@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, User, Heart, ShoppingCart, Search, ChevronDown, Bell } from "lucide-react"
+import { Menu, X, User, Heart, ShoppingCart, ChevronDown, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -115,8 +115,10 @@ export function Header() {
   const handleProfileClick = () => {
     if (userRole === "DESIGNER") {
       router.push("/seller-dashboard")
+    } else if (userRole === "ADMIN") {
+      router.push("/admin")
     } else {
-      router.push("/profile")
+      router.push("/buyer-dashboard?tab=profile")
     }
   }
 
@@ -168,15 +170,9 @@ export function Header() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-1 sm:gap-2 lg:gap-4 min-w-0">
-              <button className="hidden sm:inline-flex p-2 hover:bg-gray-100 rounded-lg transition">
-                <Search className="w-5 h-5 text-gray-700" />
-              </button>
-              <button className="hidden sm:inline-flex p-2 hover:bg-gray-100 rounded-lg transition relative">
+              <Link href="/buyer-dashboard?tab=wishlist" className="hidden sm:inline-flex p-2 hover:bg-gray-100 rounded-lg transition" aria-label="Wishlist">
                 <Heart className="w-5 h-5 text-gray-700" />
-                <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-xs rounded-full flex items-center justify-center">
-                  1
-                </span>
-              </button>
+              </Link>
               <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition relative" aria-label="Cart">
                 <ShoppingCart className="w-5 h-5 text-gray-700" />
                 {cartCount > 0 && (
@@ -278,6 +274,22 @@ export function Header() {
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             Seller Dashboard
+                          </Link>
+                        )}
+                        {userRole !== "DESIGNER" && userRole !== "ADMIN" && (
+                          <Link
+                            href="/buyer-dashboard"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Buyer Dashboard
+                          </Link>
+                        )}
+                        {userRole === "ADMIN" && (
+                          <Link
+                            href="/admin"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Admin Dashboard
                           </Link>
                         )}
                         <button
@@ -471,6 +483,24 @@ export function Header() {
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Seller Dashboard
+                      </Link>
+                    )}
+                    {userRole !== "DESIGNER" && userRole !== "ADMIN" && (
+                      <Link
+                        href="/buyer-dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Buyer Dashboard
+                      </Link>
+                    )}
+                    {userRole === "ADMIN" && (
+                      <Link
+                        href="/admin"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Admin Dashboard
                       </Link>
                     )}
                     <button

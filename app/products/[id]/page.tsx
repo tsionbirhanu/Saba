@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { RatingSummary } from "@/components/rating-summary";
-import { AiStyleAssistant } from "@/components/ai-style-assistant";
 import { VerifiedDesignerBadge } from "@/components/verified-designer-badge";
 import { getProduct, getProducts, getReviews } from "@/lib/api-client";
 import { ProductActions } from "./product-actions";
@@ -208,10 +207,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="border-t pt-8 mb-12">
-            <AiStyleAssistant productId={product.id} categoryId={product.category.id} />
           </div>
 
           <div className="border-t pt-8">

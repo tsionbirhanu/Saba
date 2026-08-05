@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,7 +29,7 @@ export default function BuyerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState("");
 
-  async function loadDashboard() {
+  const loadDashboard = useCallback(async () => {
     setIsLoading(true);
     try {
       const [currentUser, orderResponse, favoriteRows] = await Promise.all([
@@ -46,10 +46,17 @@ export default function BuyerDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [router]);
 
   useEffect(() => {
     loadDashboard();
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    const requestedTab = new URLSearchParams(window.location.search).get("tab");
+    if (requestedTab && ["orders", "wishlist", "profile", "addresses"].includes(requestedTab)) {
+      setActiveTab(requestedTab);
+    }
   }, []);
 
   const handleLogout = () => {
@@ -119,7 +126,10 @@ export default function BuyerDashboard() {
             {["orders", "wishlist", "profile", "addresses"].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+                  router.replace(`/buyer-dashboard?tab=${tab}`, { scroll: false });
+                }}
                 className={`px-4 py-3 font-medium transition border-b-2 ${
                   activeTab === tab ? "border-primary text-primary" : "border-transparent text-gray-600 hover:text-gray-900"
                 }`}

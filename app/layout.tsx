@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { AiStyleAssistant } from "@/components/ai-style-assistant"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
+        <AiStyleAssistant />
       </body>
     </html>
   )

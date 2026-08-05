@@ -3,10 +3,10 @@ import Image from "next/image";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { RatingSummary } from "@/components/rating-summary";
-import { AiStyleAssistant } from "@/components/ai-style-assistant";
 import { VerifiedDesignerBadge } from "@/components/verified-designer-badge";
 import { ChevronDown, Grid, List, Heart, Search } from "lucide-react";
 import { getProducts, smartSearchProducts } from "@/lib/api-client";
+import { ShopSortSelect } from "@/components/shop-sort-select";
 
 const categories = [
   { id: "all", name: "All Products" },
@@ -35,6 +35,10 @@ function buildHref(params: Record<string, string | undefined>) {
   });
   const query = searchParams.toString();
   return query ? `/shop?${query}` : "/shop";
+}
+
+function getCategoryName(categoryId: string) {
+  return categories.find((category) => category.id === categoryId)?.name || categoryId;
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
@@ -72,6 +76,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   const totalPages = Math.max(1, Math.ceil(products.length / itemsPerPage));
   const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const activeFilters = [
+    selectedCategory !== "all" ? getCategoryName(selectedCategory) : undefined,
+    params.search ? `Search: ${params.search}` : undefined,
+    params.minPrice ? `Min Birr ${Number(params.minPrice).toLocaleString()}` : undefined,
+    params.maxPrice ? `Max Birr ${Number(params.maxPrice).toLocaleString()}` : undefined,
+  ].filter(Boolean);
 
   return (
     <>
@@ -135,22 +145,37 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                       className="w-1/2 px-3 py-2 border rounded-lg text-sm"
                     />
                   </div>
-                  <button className="mt-4 w-full px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">
-                    Apply Filters
-                  </button>
+                  <div className="mt-4 flex items-center gap-3">
+                    <button className="flex-1 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90">
+                      Show Results
+                    </button>
+                    <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-primary">
+                      Clear
+                    </Link>
+                  </div>
                 </form>
               </div>
             </div>
 
             <div className="lg:col-span-3">
-              <div className="mb-6">
-                <AiStyleAssistant />
-              </div>
-
               <div className="bg-white rounded-lg p-4 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-sm text-gray-600">
-                  Showing {paginatedProducts.length} of {products.length} products
-                </span>
+                <div>
+                  <span className="text-sm text-gray-600">
+                    Showing {paginatedProducts.length} of {products.length} products
+                  </span>
+                  {activeFilters.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {activeFilters.map((filter) => (
+                        <span key={filter} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                          {filter}
+                        </span>
+                      ))}
+                      <Link href="/shop" className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200">
+                        Clear all
+                      </Link>
+                    </div>
+                  )}
+                </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                   <div className="flex gap-2">
                     <Link
@@ -173,19 +198,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     <input type="hidden" name="minPrice" value={params.minPrice || ""} />
                     <input type="hidden" name="maxPrice" value={params.maxPrice || ""} />
                     <div className="relative">
-                      <select
+                      <ShopSortSelect
                         name="sort"
                         defaultValue={sortBy}
                         className="px-4 py-2 border rounded-lg appearance-none pr-8 bg-white"
-                      >
-                        <option value="newest">Newest</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="popular">Most Popular</option>
-                      </select>
+                      />
                       <ChevronDown className="absolute right-2 top-3 w-4 h-4 pointer-events-none text-gray-600" />
                     </div>
-                    <button className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-100">Apply</button>
                   </form>
                 </div>
               </div>

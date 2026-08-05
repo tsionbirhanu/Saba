@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -72,7 +72,7 @@ export default function SellerDashboard() {
     suggestedTags: [],
   });
 
-  async function loadDashboard() {
+  const loadDashboard = useCallback(async () => {
     setIsLoading(true);
     try {
       const currentUser = await getLoggedInUser();
@@ -103,11 +103,11 @@ export default function SellerDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [router]);
 
   useEffect(() => {
     loadDashboard();
-  }, []);
+  }, [loadDashboard]);
 
   const categories = useMemo(() => {
     const map = new Map<string, string>();
@@ -408,7 +408,7 @@ export default function SellerDashboard() {
                   <input
                     value={form.keywords}
                     onChange={(event) => setForm({ ...form, keywords: event.target.value })}
-                    placeholder="Keywords for AI description"
+                    placeholder="Style keywords, fabric, occasion"
                     className="w-full px-4 py-2 border rounded-lg"
                   />
                   <button
@@ -417,7 +417,7 @@ export default function SellerDashboard() {
                     disabled={isAiLoading}
                     className="w-full px-4 py-2 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-60"
                   >
-                    {isAiLoading ? "Generating..." : "Generate description"}
+                    {isAiLoading ? "Drafting..." : "Draft Description"}
                   </button>
                   <input
                     value={form.price}
@@ -461,7 +461,7 @@ export default function SellerDashboard() {
                     disabled={isAiLoading}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
                   >
-                    {isAiLoading ? "Checking image..." : "Suggest category and tags"}
+                    {isAiLoading ? "Analyzing..." : "Analyze Photo"}
                   </button>
                   {form.suggestedTags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
