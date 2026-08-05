@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { orderInclude } from "@/lib/orders";
 import { notificationEmail, notifyUser } from "@/lib/notifications";
+import { normalizeImageFields } from "@/lib/product-images";
 
 export async function GET(req: Request) {
   const auth = requireAuth(req);
@@ -31,7 +32,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: "desc" }
     });
 
-    return NextResponse.json({ orders });
+    return NextResponse.json({ orders: normalizeImageFields(orders) });
   } catch {
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
   }
@@ -101,7 +102,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ order });
+    return NextResponse.json({ order: normalizeImageFields(order) });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Could not create order" }, { status: 500 });

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { normalizeImageFields } from "@/lib/product-images";
 
 const cartInclude = {
   items: {
@@ -32,10 +33,11 @@ export async function getOrCreateCart(userId: string) {
 
 export async function getCartSummary(userId: string) {
   const cart = await getOrCreateCart(userId);
+  const normalizedCart = normalizeImageFields(cart);
   const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-  return { cart, itemCount, subtotal };
+  return { cart: normalizedCart, itemCount, subtotal };
 }
 
 export function normalizeQuantity(quantity: unknown) {

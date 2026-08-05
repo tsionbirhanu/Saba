@@ -1,15 +1,9 @@
 // app/api/designers/[id]/upload_id/route.ts
 import { prisma } from "@/lib/prisma";
-import { v2 as cloudinary } from "cloudinary";
 import { NextResponse, NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { getErrorMessage } from "@/lib/errors";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { configureCloudinary } from "@/lib/cloudinary";
 
 export async function POST(
   req: NextRequest,
@@ -36,6 +30,7 @@ export async function POST(
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload file to Cloudinary
+    const cloudinary = configureCloudinary();
     const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: "id_cards" },

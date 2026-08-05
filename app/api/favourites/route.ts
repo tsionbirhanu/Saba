@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { normalizeImageFields } from "@/lib/product-images";
 
 export async function GET(req: Request) {
   try {
@@ -29,7 +30,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(favorites);
+    return NextResponse.json(normalizeImageFields(favorites));
   } catch (error) {
     console.error("Error fetching favorites:", error);
     return NextResponse.json({ error: "Failed to fetch favorites" }, { status: 500 });

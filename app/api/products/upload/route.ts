@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
-import cloudinary from "cloudinary";
 import { requireAuth } from "@/lib/auth";
-
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_URL?.split("@")[1],
-  api_key: process.env.CLOUDINARY_URL?.split("//")[1]?.split(":")[0],
-  api_secret: process.env.CLOUDINARY_URL?.split(":")[2]?.split("@")[0],
-});
+import { configureCloudinary } from "@/lib/cloudinary";
 
 export async function POST(req: Request) {
   try {
@@ -22,8 +16,9 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    const cloudinary = configureCloudinary();
     const uploadResponse = await new Promise((resolve, reject) => {
-      cloudinary.v2.uploader
+      cloudinary.uploader
         .upload_stream({ folder: "products" }, (error, result) => {
           if (error) reject(error);
           else resolve(result);
